@@ -4,7 +4,7 @@ html, body{
 }
 div.logo1{
     margin: 0px;
-    background-color: orange;
+    background-color: blueviolet;
     width: 100px;
     height: 100px;
     display: flex;
@@ -30,7 +30,7 @@ div div h1.logo {
     margin: 0px;
 }
 div.menu {
-    background-color:rgb(240, 215, 142);
+    background-color:rgb(158, 142, 240);
     z-index: -1;
     position: absolute;
     top: 0px;
