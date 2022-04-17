@@ -37,3 +37,4 @@ for person in people:
         print(f"{person} was added successfully.")
     else:
         print("Flight is at max capacity.")
+
