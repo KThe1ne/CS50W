@@ -84,6 +84,10 @@ body{
     margin: 5px;
 }
 
+.searchbuttons > input:hover{
+    border: solid #5f6368;
+
+}
 
 #searchbar:focus{
     background-color: #303134;

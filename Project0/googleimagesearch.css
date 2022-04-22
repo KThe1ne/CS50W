@@ -38,6 +38,10 @@ body{
     width: 80px;
 }
 
+.top a:visited, a:link{
+    text-decoration: none;  
+    color: white;
+}
 
 .search{
     display: flex;
@@ -60,6 +64,24 @@ body{
     color: #4487f6;
 }
 
+.searchbuttons{
+    display: flex;
+    padding: 30px ;
+    justify-content: center;
+}
+.searchbuttons > input{
+    border: none;
+    color: #e8eaed;
+    background: #303134;
+    border-radius: 6px;
+    padding: 10px 10px 10px 10px;
+    margin: 5px;
+}
+
+.searchbuttons > input:hover{
+    border: solid #5f6368;
+}
+
 #searchbar{
     display: block;
     width: 400px;
@@ -68,20 +90,6 @@ body{
     border-radius: 24px;
     height: 40px;
     background: #202124;
-}
-
-.searchbuttons{
-    display: flex;
-    padding: 30px ;
-    justify-content: center;
-}
-.searchbuttons > button{
-    border: none;
-    color: #e8eaed;
-    background: #303134;
-    border-radius: 6px;
-    padding: 10px 10px 10px 10px;
-    margin: 5px;
 }
 
 
@@ -95,3 +103,4 @@ input[type=text]{
     color: #e8eaed;
     padding-left: 30px;
 }
+
