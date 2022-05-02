@@ -35,7 +35,7 @@ def search(request):
 def newEntry(request):
     class newEntryForm(forms.Form):
         title = forms.CharField(label="Title", max_length=50)
-        content = forms.CharField(label="Content")
+        content = forms.CharField(label="Content", widget=forms.Textarea(attrs={"rows":10,"cols":20}))
 
     if request.method == "POST":
         #return HttpResponse(request.POST.get("title"))
@@ -50,11 +50,6 @@ def newEntry(request):
             else:
                 util.save_entry(title, content)
                 return HttpResponseRedirect(reverse("wiki",args=[title]))
-                
-                """ render(request, "wiki/index.html",{
-                    "wiki": util.get_entry(title)
-                }) """
-
 
     return render(request, "newEntry/index.html",{
         "form": newEntryForm()

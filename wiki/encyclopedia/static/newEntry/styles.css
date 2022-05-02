@@ -1,0 +1,10 @@
+
+
+.newentry label{
+    display: block;
+    font-weight: bold;
+}
+
+.newentry input[type="text"]{
+    min-width: 40%;
+}
