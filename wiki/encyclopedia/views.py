@@ -3,6 +3,7 @@ from django import forms
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 from . import util
 
@@ -40,12 +41,19 @@ def newEntry(request):
         #return HttpResponse(request.POST.get("title"))
         form = newEntryForm(request.POST)
         if form.is_valid():
-            #return HttpResponse(form.cleaned_data["title"])
-            if util.get_entry(form.cleaned_data["title"]):
-                return render(request, reverse("newentry"),{
-                    "form": form
+            title, content = form.cleaned_data.values()
+            if util.get_entry(title):
+                return render(request, "newEntry/index.html",{
+                    "form": form,
+                    "error": True
                 })
-            
+            else:
+                util.save_entry(title, content)
+                return HttpResponseRedirect(reverse("wiki",args=[title]))
+                
+                """ render(request, "wiki/index.html",{
+                    "wiki": util.get_entry(title)
+                }) """
 
 
     return render(request, "newEntry/index.html",{

@@ -4,8 +4,11 @@
 {% block title %}New Entry{% endblock %}
 
 <link rel="stylesheet" href="{% static 'newEntry/styles.css'%}">
-
 {% block body %}
+
+    {% if error %}
+    <h2>Entry with title {{}}already exists. Please Try Again</h2>
+    {% endif %}
 
     <form action="{% url 'newentry' %}" method="POST">
         {% csrf_token %}
