@@ -1,0 +1,21 @@
+{% extends "encyclopedia/layout.html" %}
+
+{%block title%}Search Results{% endblock %}
+
+{% block body%}
+    {% if queryRes %}
+        <ul>
+            {% for res in queryRes %}
+                <li>
+                    <a href="/wiki/{{res}}">{{ res }}</a>
+                </li>
+            {% empty %}
+                <h2>Entry Does Not Exist</h2>
+            {% endfor %}
+        </ul>
+    {% elif wiki %}
+        {{wiki}}
+    {% else %}
+        <h2>Entry Does Not Exist</h2>
+    {% endif %}
+{% endblock %}
