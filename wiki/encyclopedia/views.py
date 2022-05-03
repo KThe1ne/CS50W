@@ -18,16 +18,15 @@ def index(request):
 
 def wiki(request, entry):
     return render(request, "wiki/index.html",{
-        "wiki": util.get_entry(entry)
+        "wiki": util.get_entry(entry),
+        "entry": entry
     })
 
 def search(request):
     entry = request.GET.get("q")
     if (util.get_entry(entry)):
 
-        return render(request, "wiki/index.html",{
-            "wiki": util.get_entry(entry)
-        })
+        return HttpResponseRedirect(reverse("wiki",args=[entry]))
     
     else:
 
@@ -71,7 +70,6 @@ def editPage(request, entry):
         content = forms.CharField(label="Content", widget=forms.Textarea(attrs={"rows":10,"cols":20,"id":"content"}))
     
     if request.method == "POST":
-        #return HttpResponse(request.POST.get("title"))
         form = newEntryForm(request.POST)
         if form.is_valid():
             title, content = form.cleaned_data.values()
