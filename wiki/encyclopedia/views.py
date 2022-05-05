@@ -89,3 +89,4 @@ def randomEntry(request):
     randEntry = random.choice(entries)
 
     return HttpResponseRedirect(reverse("wiki", args=[randEntry]))
+
