@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>{{ item.title }}</h2>
+    {% for data in item.keys() %}
+        <div>
+            {{ data }}
+        </div>
+    {% endfor %}
+
+{% endblock %}

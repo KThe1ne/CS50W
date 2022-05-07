@@ -30,6 +30,8 @@ def search(request):
     
     else:
 
+        # Use list_entries and fil
+
         return render(request, "search/index.html",{
             "queryRes": util.search_entry(entry)
         })
