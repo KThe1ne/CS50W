@@ -1,0 +1,31 @@
+.container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-left: 0px;
+    margin-right: 0px;
+    min-width: 100%;
+    column-gap: 10px;
+}
+
+.item_card{
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+    width: 40%;
+}
+
+.item_card img{
+    height: 200px;
+    width: 200px;
+}
+
+.item_card a{
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.item_card p{
+    width: 40ch;
+}
