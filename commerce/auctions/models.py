@@ -13,7 +13,7 @@ class Listing(models.Model):
     description = models.CharField(max_length=500)
     #reserved_price = models.IntegerField(blank=True)
     category = models.CharField(max_length=25, blank=True)
-    img_link = models.URLField(blank=True)
+    img_link = models.URLField(blank=True,max_length=300)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing_made")
 
 class Bid(models.Model):

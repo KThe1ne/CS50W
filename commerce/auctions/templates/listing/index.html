@@ -1,12 +1,44 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
 
-    <h2>{{ item.title }}</h2>
-    {% for data in item.keys() %}
-        <div>
-            {{ data }}
+    <link rel="stylesheet" href="{% static 'listing/styles.css' %}">
+
+    <div class="container"> 
+        <img src="{{ item.img_link }}">
+        <div class="shop_section">
+            <h4>{{ item.title }}</h4>
+            <h5>{{ item.creator }}</h5>
+            <div class="bid_data">
+                <h5>Starting Bid: {{ item.starting_bid }}</h5>
+                {% if item.bid %}
+                    <h5>Last Bid Price: {{ highest_bid }}</h5>
+                {% else %}
+                    <h5>No Bids Yet. Be the first</h5>
+                {% endif %}
+            </div>
+            <form action="{% url 'listing' item.id %}" method="POST">
+                {% csrf_token %}
+                <input type="number" name="bid" min="{{ highest_bid }}">
+                <input type="submit" value="Make Bid">
+            </form>
         </div>
-    {% endfor %}
+    </div>
+    <div class="description">
+        <h2>Description</h2>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae repellendus omnis, iusto pariatur autem optio quam amet laudantium dolor. Assumenda quis vitae qui earum labore atque voluptates incidunt vel dolores.</p>
+    </div>
+    <div class="comments">
+        <h2>Comments</h2>
+        {% for comment in comments %}
+            <div class="comment-container">
+                <img src="https://freesvg.org/img/abstract-user-flat-1.png" alt="user_icon">
+                <p>{{ comment.comment }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <a href="">Add Comment</a>
+
 
 {% endblock %}

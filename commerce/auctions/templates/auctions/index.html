@@ -2,10 +2,19 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-    <div>
+    <div class="item_card">
         {% for listing in listings %}
-            <div>{{ listing.img_link }}</div>
-            <a href="{% url 'listing' listing.id %}">Listing Page</a>
+
+            {% if item.img_link %}
+                <img src="{{ item.img_link }}">
+            {% else %}
+                <div class="no_img_icon"></div>
+            {% endif %}
+
+            <div class="item_card details">
+                <a href="{% url 'listing' listing.id %}">{{ item.title }}</a>
+                <p>{{ item.description }}</p>
+            </div>
         {% endfor %}
     </div>
 {% endblock %}

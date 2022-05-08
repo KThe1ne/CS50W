@@ -1,3 +1,4 @@
+import re
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -67,10 +68,39 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-def listing(request, listing_id):
+def listing_view(request, listing_id):
 
     list_item = Listing.objects.get(id = listing_id)
+    #comments = Comment.objects.filter(listing = )
+    comments = list_item.comment.all()
+    
+    try:
+        highest_bid = list_item.bid.all().order_by("bid").last().bid
+    except:
+        highest_bid = list_item.starting_bid
+
+    
+    if request.method == "POST":
+
+        bid_amount = int(request.POST["bid"])
+
+
+
+        curr_user = request.user
+
+            
+        new_bid = Bid(bid=bid_amount, bidder=curr_user, listing=list_item)
+        new_bid.save()
+
+        return render(request, "listing/index.html",{
+            "item": list_item,
+            "highest_bid": highest_bid,
+            "comments": comments
+        })
+
 
     return render(request, "listing/index.html",{
-        "item": list_item
+        "item": list_item,
+        "highest_bid": highest_bid,
+        "comments": comments
     })
