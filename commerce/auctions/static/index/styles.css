@@ -7,6 +7,7 @@
     margin-right: 0px;
     min-width: 100%;
     column-gap: 10px;
+
 }
 
 .item_card{
@@ -14,18 +15,43 @@
     flex-direction: row;
     column-gap: 10px;
     width: 40%;
+    align-content: center;
 }
 
 .item_card img{
-    height: 200px;
+    height: 100%;
     width: 200px;
 }
 
-.item_card a{
+.item_title{
     font-weight: bold;
     font-size: 1.5em;
 }
 
 .item_card p{
     width: 40ch;
+}
+
+.category{
+    border-radius: 10px;
+    background-color: aquamarine;
+    min-width: fit-content;
+    max-width: 30px;
+    height: 30px;
+    padding: 4px;
+    position: relative;
+}
+
+.category p{
+    width: fit-content;
+    margin: 0px;
+}
+
+.no_img{
+    height: 100%;
+    width: 200px;
+    text-align: center;
+    padding-top: auto;
+    padding-bottom: auto;
+    background-color: beige;
 }

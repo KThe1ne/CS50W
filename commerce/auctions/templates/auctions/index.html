@@ -10,10 +10,10 @@
                 {% if listing.img_link %}
                     <img src="{{ listing.img_link }}">
                 {% else %}
-                    <div class="no_img_icon"></div>
+                    <div class="no_img">No Image</div>
                 {% endif %}
                 <div class="item_details">
-                    <a href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
+                    <a class="item_title" href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
                     <!-- <p>{{ listing.description }}</p> -->
                     <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Odit sed quas, praesentium alias adipisci totam, inventore repellendus sequi optio est dolorem perferendis minima libero ut quidem labore ducimus, numquam molestias.</p>
                     <div class="category">
