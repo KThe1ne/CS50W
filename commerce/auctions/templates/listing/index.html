@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="{% static 'listing/styles.css' %}">
 
     <div class="container"> 
+        <form action="{% url 'listing' item.id %}" method="post">
+            <input type="checkbox" name="watchlist">
+        </form>
         <img src="{{ item.img_link }}">
         <div class="shop_section">
             <h4>{{ item.title }}</h4>

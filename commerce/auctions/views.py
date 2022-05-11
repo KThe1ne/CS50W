@@ -74,10 +74,7 @@ def listing_view(request, listing_id):
     #comments = Comment.objects.filter(listing = )
     comments = list_item.comment.all()
     
-    try:
-        highest_bid = list_item.bid.all().order_by("bid").last().bid
-    except:
-        highest_bid = list_item.starting_bid
+    highestBid = highest_bid(list_item) #Highest bid is passed into the page on load to allow for client-side check
 
     
     if request.method == "POST":
@@ -85,22 +82,26 @@ def listing_view(request, listing_id):
         bid_amount = int(request.POST["bid"])
 
 
-
         curr_user = request.user
+        user_bid = curr_user.bid.all()
 
-            
-        new_bid = Bid(bid=bid_amount, bidder=curr_user, listing=list_item)
-        new_bid.save()
+        if (bid_amount > highest_bid(list_item)): #Get highest bid again for server-sdie check in case another bid was successful before the client-side is updated.
+                        
+            new_bid = Bid(bid=bid_amount, bidder=curr_user, listing=list_item)
+            new_bid.save()
 
-        return render(request, "listing/index.html",{
-            "item": list_item,
-            "highest_bid": highest_bid,
-            "comments": comments
-        })
+        return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
 
     return render(request, "listing/index.html",{
         "item": list_item,
-        "highest_bid": highest_bid,
+        "highest_bid": highestBid,
         "comments": comments
     })
+
+
+def highest_bid(item):
+    try:
+        return item.bid.all().order_by("bid").last().bid
+    except:
+        return item.starting_bid
