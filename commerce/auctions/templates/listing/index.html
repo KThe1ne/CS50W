@@ -5,10 +5,12 @@
 
     <link rel="stylesheet" href="{% static 'listing/styles.css' %}">
 
+    <form action="{% url 'listing' item.id %}" method="POST" class="watchlist">
+        {% csrf_token %}
+        <input type="checkbox" name="addtowatchlist">
+        <input type="submit" value="Add to Watchlist">
+    </form>
     <div class="container"> 
-        <form action="{% url 'listing' item.id %}" method="post">
-            <input type="checkbox" name="watchlist">
-        </form>
         <img src="{{ item.img_link }}">
         <div class="shop_section">
             <h4>{{ item.title }}</h4>

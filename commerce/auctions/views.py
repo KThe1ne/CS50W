@@ -4,6 +4,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
 from .models import *
 
@@ -68,35 +69,44 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+
 def listing_view(request, listing_id):
 
     list_item = Listing.objects.get(id = listing_id)
     #comments = Comment.objects.filter(listing = )
     comments = list_item.comment.all()
+    curr_user = request.user
     
-    highestBid = highest_bid(list_item) #Highest bid is passed into the page on load to allow for client-side check
+    highestBid = highest_bid(list_item) # Highest bid is passed into the page on load to allow for client-side check
 
     
     if request.method == "POST":
 
-        bid_amount = int(request.POST["bid"])
+        if ("bid" in request.POST):
+
+            bid_amount = int(request.POST["bid"])
+
+            user_bid = curr_user.bid.all()
 
 
-        curr_user = request.user
-        user_bid = curr_user.bid.all()
+            if (bid_amount > highest_bid(list_item)): # Get highest bid again for server-sdie check in case another bid was successful before the client-side is updated.
+                            
+                new_bid = Bid(bid=bid_amount, bidder=curr_user, listing=list_item)
+                new_bid.save()
 
-        if (bid_amount > highest_bid(list_item)): #Get highest bid again for server-sdie check in case another bid was successful before the client-side is updated.
-                        
-            new_bid = Bid(bid=bid_amount, bidder=curr_user, listing=list_item)
-            new_bid.save()
+            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
-        return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+        elif ("addtowatchlist" in request.POST and request.POST["addtowatchlist"] == 'on'):
+
+            list_item.watchlist.add(curr_user)
+
+            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
 
     return render(request, "listing/index.html",{
         "item": list_item,
         "highest_bid": highestBid,
-        "comments": comments
+        "comments": comments,
     })
 
 

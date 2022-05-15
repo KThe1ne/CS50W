@@ -15,7 +15,7 @@ class Listing(models.Model):
     category = models.CharField(max_length=25, blank=True)
     img_link = models.URLField(blank=True,max_length=300)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing_made")
-    watchlist = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlisted",default=False)
+    watchlist = models.ManyToManyField(User, blank=True, null=True, related_name="watchlisted")
 
 class Bid(models.Model):
     bid = models.IntegerField()   
