@@ -7,8 +7,13 @@
 
     <form action="{% url 'listing' item.id %}" method="POST" class="watchlist">
         {% csrf_token %}
-        <input type="checkbox" name="addtowatchlist">
-        <input type="submit" value="Add to Watchlist">
+        {% if watchlisted %}  
+            <input type="checkbox" name="removefromwatchlist" checked hidden>
+            <input type="submit" value="Remove From Watchlist">
+        {% else %}
+            <input type="checkbox" name="addtowatchlist" checked>
+            <input type="submit" value="Add To Watchlist">
+        {% endif %}
     </form>
     <div class="container"> 
         <img src="{{ item.img_link }}">

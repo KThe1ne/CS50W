@@ -94,19 +94,28 @@ def listing_view(request, listing_id):
                 new_bid = Bid(bid=bid_amount, bidder=curr_user, listing=list_item)
                 new_bid.save()
 
-            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
-        elif ("addtowatchlist" in request.POST and request.POST["addtowatchlist"] == 'on'):
+        elif ("addtowatchlist" in request.POST):
 
             list_item.watchlist.add(curr_user)
 
-            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+        elif ("removefromwatchlist" in request.POST):
 
+            list_item.watchlist.through.objects.filter(user_id = curr_user.id).delete() 
+
+
+        return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+
+    # Listing.objects.all(). 
+    # ...: first().watchlist.thro 
+    # ...: ugh.objects.all().firs 
+    # ...: t().delete()
 
     return render(request, "listing/index.html",{
         "item": list_item,
         "highest_bid": highestBid,
         "comments": comments,
+        "watchlisted": list(list_item.watchlist.filter(id = curr_user.id))  #Checks if item is watchlisted by current user. 'filter' is used to ensure that error is not thrown if the item is not watchlisted
     })
 
 
