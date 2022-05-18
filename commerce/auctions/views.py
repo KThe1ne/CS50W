@@ -11,7 +11,7 @@ from .models import *
 
 def index(request):
 
-    listings = Listing.objects.all()
+    listings = Listing.objects.filter(active = True)
 
     return render(request, "auctions/index.html",{
         "listings": listings
@@ -103,19 +103,20 @@ def listing_view(request, listing_id):
 
             list_item.watchlist.through.objects.filter(user_id = curr_user.id).delete() 
 
-
+        elif ("closeauction" in request.POST):
+        
+            list_item.active = False
+            list_item.save()
+        
         return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
-    # Listing.objects.all(). 
-    # ...: first().watchlist.thro 
-    # ...: ugh.objects.all().firs 
-    # ...: t().delete()
 
     return render(request, "listing/index.html",{
         "item": list_item,
         "highest_bid": highestBid,
         "comments": comments,
         "watchlisted": list(list_item.watchlist.filter(id = curr_user.id))  #Checks if item is watchlisted by current user. 'filter' is used to ensure that error is not thrown if the item is not watchlisted
+        "creator": list_item.creator == curr_user
     })
 
 

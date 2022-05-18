@@ -11,7 +11,7 @@
             <input type="checkbox" name="removefromwatchlist" checked hidden>
             <input type="submit" value="Remove From Watchlist">
         {% else %}
-            <input type="checkbox" name="addtowatchlist" checked>
+            <input type="checkbox" name="addtowatchlist" checked hidden>
             <input type="submit" value="Add To Watchlist">
         {% endif %}
     </form>
@@ -30,9 +30,14 @@
             </div>
             <form action="{% url 'listing' item.id %}" method="POST">
                 {% csrf_token %}
-                <input type="number" name="bid" min="{{ highest_bid }}">
-                <input type="submit" value="Make Bid">
-            </form>
+                {% if creator %}
+                    <input type="checkbox" name="closeauction" checked hidden>
+                    <input type="submit" value="Close Auction">
+                {% else %}
+                    <input type="number" name="bid" min="{{ highest_bid }}">
+                    <input type="submit" value="Make Bid">
+                {% endif %}
+                </form>
         </div>
     </div>
     <div class="description">
