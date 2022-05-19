@@ -115,13 +115,26 @@ def listing_view(request, listing_id):
         "item": list_item,
         "highest_bid": highestBid,
         "comments": comments,
-        "watchlisted": list(list_item.watchlist.filter(id = curr_user.id))  #Checks if item is watchlisted by current user. 'filter' is used to ensure that error is not thrown if the item is not watchlisted
-        "creator": list_item.creator == curr_user
+        "watchlisted": list(list_item.watchlist.filter(id = curr_user.id)),  #Checks if item is watchlisted by current user. 'filter' is used to ensure that error is not thrown if the item is not watchlisted
+        "curr_user": curr_user
     })
+
 
 
 def highest_bid(item):
     try:
-        return item.bid.all().order_by("bid").last().bid
+        return item.bid.all().order_by("bid").last()
     except:
-        return item.starting_bid
+        return False
+
+def watchlist(request):
+
+    curr_user = request.user
+    listings = Listing.objects.filter(active = True)
+    
+    
+    watchlist_listings = curr_user.watchlisted.all()
+
+    return render(request, "watchlist/index.html",{
+        "listings": watchlist_listings
+    })

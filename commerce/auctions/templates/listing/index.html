@@ -16,28 +16,40 @@
         {% endif %}
     </form>
     <div class="container"> 
+
         <img src="{{ item.img_link }}">
+
         <div class="shop_section">
+
             <h4>{{ item.title }}</h4>
             <h5>{{ item.creator }}</h5>
             <div class="bid_data">
                 <h5>Starting Bid: {{ item.starting_bid }}</h5>
-                {% if item.bid %}
-                    <h5>Last Bid Price: {{ highest_bid }}</h5>
+                {% if highest_bid %}
+                    <h5>Last Bid Price: {{ highest_bid.bid }}</h5>
                 {% else %}
                     <h5>No Bids Yet. Be the first</h5>
                 {% endif %}
             </div>
-            <form action="{% url 'listing' item.id %}" method="POST">
-                {% csrf_token %}
-                {% if creator %}
-                    <input type="checkbox" name="closeauction" checked hidden>
-                    <input type="submit" value="Close Auction">
-                {% else %}
-                    <input type="number" name="bid" min="{{ highest_bid }}">
-                    <input type="submit" value="Make Bid">
-                {% endif %}
+
+            {% if item.active == True %}
+                <form action="{% url 'listing' item.id %}" method="POST">
+                    {% csrf_token %}
+                    {% if curr_user == item.creator %}
+                        <input type="checkbox" name="closeauction" checked hidden>
+                        <input type="submit" value="Close Auction">
+                    {% else %}
+                        <input type="number" name="bid" min="{{ highest_bid }}">
+                        <input type="submit" value="Make Bid">
+                    {% endif %}
                 </form>
+            {% else %}
+
+                {% if curr_user == highest_bid.bidder %}
+                    <h2> You won the auction!!! </h2>
+                {% endif %}
+                
+            {% endif %}
         </div>
     </div>
     <div class="description">

@@ -1,0 +1,28 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <link rel="stylesheet" href="{% static 'index/styles.css' %}">
+    <h2>Active Listings</h2>
+    <div class="container">
+        {% for listing in listings %}
+            <div class="item_card">
+                {% if listing.img_link %}
+                    <img src="{{ listing.img_link }}">
+                {% else %}
+                    <div class="no_img">No Image</div>
+                {% endif %}
+                <div class="item_details">
+                    <a class="item_title" href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
+                    <!-- <p>{{ listing.description }}</p> -->
+                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Odit sed quas, praesentium alias adipisci totam, inventore repellendus sequi optio est dolorem perferendis minima libero ut quidem labore ducimus, numquam molestias.</p>
+                    <div class="category">
+                        <p>{{ listing.category }}</p>
+                    </div>
+                    <a href="{% url 'listing' listing.id %}">View Listing</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+{% endblock %}
