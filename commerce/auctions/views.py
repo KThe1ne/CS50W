@@ -86,9 +86,6 @@ def listing_view(request, listing_id):
 
             bid_amount = int(request.POST["bid"])
 
-            user_bid = curr_user.bid.all()
-
-
             if (bid_amount > highest_bid(list_item)): # Get highest bid again for server-sdie check in case another bid was successful before the client-side is updated.
                             
                 new_bid = Bid(bid=bid_amount, bidder=curr_user, listing=list_item)
@@ -119,22 +116,26 @@ def listing_view(request, listing_id):
         "curr_user": curr_user
     })
 
-
-
 def highest_bid(item):
     try:
-        return item.bid.all().order_by("bid").last()
+        return item.bid.all().order_by("bid").last() #Throws an error if no bids are present.
     except:
-        return False
+        return False 
 
 def watchlist(request):
 
-    curr_user = request.user
-    listings = Listing.objects.filter(active = True)
-    
+    curr_user = request.user    
     
     watchlist_listings = curr_user.watchlisted.all()
 
     return render(request, "watchlist/index.html",{
         "listings": watchlist_listings
+    })
+
+def category_listing(request, category_name):
+
+    category_listing = Listing.objects.filter(category=category_name)
+
+    return render(request, "auctions/index.html",{
+        "listings": category_listing
     })

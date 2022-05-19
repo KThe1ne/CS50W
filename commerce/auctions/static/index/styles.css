@@ -39,7 +39,7 @@
 
 .category{
     border-radius: 10px;
-    background-color: aquamarine;
+    background-color: aqua;
     min-width: fit-content;
     max-width: 30px;
     height: 30px;
@@ -47,9 +47,11 @@
     position: relative;
 }
 
-.category p{
+.category a{
     width: fit-content;
     margin: 0px;
+    text-decoration: none;
+    color: black;
 }
 
 .no_img{
