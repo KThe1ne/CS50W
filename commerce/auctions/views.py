@@ -1,3 +1,4 @@
+from cProfile import label
 import re
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
@@ -5,16 +6,19 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+from django.contrib.auth.decorators import login_required
 
 from .models import *
 
+class addCommentForm(forms.Form):
+    comment = forms.CharField(label="Comment", max_length=300, widget=forms.Textarea(attrs={'rows': 2, 'cols':100}))
 
 def index(request):
 
-    listings = Listing.objects.filter(active = True)
+    listings = Listing.objects.filter(active = True) # Displays only active listings
 
     return render(request, "auctions/index.html",{
-        "listings": listings
+        "listings": listings,
     })
 
 
@@ -73,7 +77,6 @@ def register(request):
 def listing_view(request, listing_id):
 
     list_item = Listing.objects.get(id = listing_id)
-    #comments = Comment.objects.filter(listing = )
     comments = list_item.comment.all()
     curr_user = request.user
     
@@ -105,6 +108,12 @@ def listing_view(request, listing_id):
             list_item.active = False
             list_item.save()
         
+        elif ("comment" in request.POST):
+
+            new_comment = Comment(creator=curr_user,listing=list_item,comment=request.POST["comment"])
+            new_comment.save()
+
+
         return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
 
@@ -113,7 +122,8 @@ def listing_view(request, listing_id):
         "highest_bid": highestBid,
         "comments": comments,
         "watchlisted": list(list_item.watchlist.filter(id = curr_user.id)),  #Checks if item is watchlisted by current user. 'filter' is used to ensure that error is not thrown if the item is not watchlisted
-        "curr_user": curr_user
+        "curr_user": curr_user,
+        "form": addCommentForm
     })
 
 def highest_bid(item):
@@ -122,6 +132,7 @@ def highest_bid(item):
     except:
         return False 
 
+@login_required(login_url="login")
 def watchlist(request):
 
     curr_user = request.user    
@@ -137,5 +148,7 @@ def category_listing(request, category_name):
     category_listing = Listing.objects.filter(category=category_name)
 
     return render(request, "auctions/index.html",{
-        "listings": category_listing
+        "listings": category_listing,
+  
     })
+

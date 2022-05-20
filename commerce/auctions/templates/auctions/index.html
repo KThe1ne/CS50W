@@ -14,8 +14,7 @@
                 {% endif %}
                 <div class="item_details">
                     <a class="item_title" href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
-                    <!-- <p>{{ listing.description }}</p> -->
-                    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Odit sed quas, praesentium alias adipisci totam, inventore repellendus sequi optio est dolorem perferendis minima libero ut quidem labore ducimus, numquam molestias.</p>
+                    <p>{{ listing.description }}</p>
                     <div class="category">
                         <a href="{% url 'category' listing.category %}"> {{ listing.category }} </a>
                     </div>

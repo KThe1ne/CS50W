@@ -38,7 +38,7 @@
                     {% if curr_user == item.creator %}
                         <input type="checkbox" name="closeauction" checked hidden>
                         <input type="submit" value="Close Auction">
-                    {% else %}
+                    {% elif user.is_authenticated %}
                         <input type="number" name="bid" min="{{ highest_bid }}">
                         <input type="submit" value="Make Bid">
                     {% endif %}
@@ -58,6 +58,11 @@
     </div>
     <div class="comments">
         <h2>Comments</h2>
+        <form action="{% url 'listing' item.id %}" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Add Comment">
+        </form>
         {% for comment in comments %}
             <div class="comment-container">
                 <img src="https://freesvg.org/img/abstract-user-flat-1.png" alt="user_icon">
@@ -65,7 +70,7 @@
             </div>
         {% endfor %}
     </div>
-    <a href="">Add Comment</a>
+    <!-- <a href="">Add Comment</a> -->
 
 
 {% endblock %}
