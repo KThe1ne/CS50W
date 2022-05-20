@@ -1,5 +1,6 @@
 from cProfile import label
 import re
+from unicodedata import category
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -12,6 +13,14 @@ from .models import *
 
 class addCommentForm(forms.Form):
     comment = forms.CharField(label="Comment", max_length=300, widget=forms.Textarea(attrs={'rows': 2, 'cols':100}))
+
+class addListingForm(forms.Form):
+    title = forms.CharField(label="Title")
+    starting_bid = forms.IntegerField(label="Starting Bid")
+    category = forms.CharField(label="Category")
+    img_link = forms.URLField(label="Image Link")
+    description = forms.CharField(label="Description", widget=forms.Textarea(attrs={'rows': 4, 'cols':100}))
+
 
 def index(request):
 
@@ -73,6 +82,27 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+@login_required(login_url="login")
+def new_listing(request):
+
+    curr_user = request.user
+
+    if request.method == "POST":
+
+        form = addListingForm(request.POST)
+
+        if form.is_valid():
+
+            cleaned_data = form.cleaned_data
+
+            newListing = Listing(title=cleaned_data["title"], starting_bid=cleaned_data["starting_bid"],category=cleaned_data["category"], img_link=cleaned_data["img_link"], description=cleaned_data["description"], creator=curr_user)
+            newListing.save()
+        
+            return HttpResponseRedirect(reverse("index"))
+
+    return render(request, "newListing/index.html", {
+        "form": addListingForm,
+    })
 
 def listing_view(request, listing_id):
 
@@ -139,8 +169,17 @@ def watchlist(request):
     
     watchlist_listings = curr_user.watchlisted.all()
 
-    return render(request, "watchlist/index.html",{
+    return render(request, "auctions/index.html",{
         "listings": watchlist_listings
+    })
+
+def categories(request):
+
+    # category_listing = Listing.objects.filter(category=category_name)
+    categories = set([item.category for item in Listing.objects.all()])
+
+    return render(request, "categories/index.html",{
+        "categories": categories,
     })
 
 def category_listing(request, category_name):
@@ -149,6 +188,4 @@ def category_listing(request, category_name):
 
     return render(request, "auctions/index.html",{
         "listings": category_listing,
-  
     })
-

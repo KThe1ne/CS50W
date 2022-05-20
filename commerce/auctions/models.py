@@ -12,7 +12,7 @@ class Listing(models.Model):
     starting_bid = models.IntegerField()
     description = models.CharField(max_length=500)
     #reserved_price = models.IntegerField(blank=True)
-    category = models.CharField(max_length=25, blank=True)
+    category = models.CharField(max_length=15, blank=True)
     img_link = models.URLField(blank=True,max_length=300)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listing_made")
     watchlist = models.ManyToManyField(User, blank=True, null=True, related_name="watchlisted")

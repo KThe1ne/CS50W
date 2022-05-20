@@ -1,0 +1,13 @@
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+form input[type="submit"]{
+    max-width: 300px;
+    align-self: center;
+    margin-top: 20px;
+}

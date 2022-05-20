@@ -14,10 +14,15 @@
                 {% endif %}
                 <div class="item_details">
                     <a class="item_title" href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
-                    <p>{{ listing.description }}</p>
+                    {% if highest_bid %}
+                        <h4>${{ highest_bid }}</h4>
+                    {% else %}
+                        <h4>${{ listing.starting_bid }}</h4>
+                    {% endif %}
                     <div class="category">
-                        <a href="{% url 'category' listing.category %}"> {{ listing.category }} </a>
+                        <a href="{% url 'categoryListing' listing.category %}"> {{ listing.category }} </a>
                     </div>
+                    <p>{{ listing.description }}</p>
                     <a href="{% url 'listing' listing.id %}">View Listing</a>
                 </div>
             </div>
