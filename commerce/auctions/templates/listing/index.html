@@ -1,0 +1,77 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+    <link rel="stylesheet" href="{% static 'listing/styles.css' %}">
+    {% if curr_user != item.creator %}
+        <form action="{% url 'listing' item.id %}" method="POST" class="watchlist">
+            {% csrf_token %}
+            {% if watchlisted %}  
+                <input type="checkbox" name="removefromwatchlist" checked hidden>
+                <input type="submit" value="Remove From Watchlist">
+            {% else %}
+                <input type="checkbox" name="addtowatchlist" checked hidden>
+                <input type="submit" value="Add To Watchlist">
+            {% endif %}
+        </form>
+    {% endif %}
+    <div class="container"> 
+
+        <img src="{{ item.img_link }}">
+
+        <div class="shop_section">
+
+            <h4>{{ item.title }}</h4>
+            <h5>{{ item.creator }}</h5>
+            <div class="bid_data">
+                <h5>Starting Bid: {{ item.starting_bid }}</h5>
+                {% if highest_bid %}
+                    <h5>Last Bid Price: {{ highest_bid.bid }}</h5>
+                {% else %}
+                    <h5>No Bids Yet. Be the first</h5>
+                {% endif %}
+            </div>
+
+            {% if item.active == True %}
+                <form action="{% url 'listing' item.id %}" method="POST">
+                    {% csrf_token %}
+                    {% if curr_user == item.creator %}
+                        <input type="checkbox" name="closeauction" checked hidden>
+                        <input type="submit" value="Close Auction">
+                    {% elif user.is_authenticated %}
+                        <input type="number" name="bid" min="{{ highest_bid }}">
+                        <input type="submit" value="Make Bid">
+                    {% endif %}
+                </form>
+            {% else %}
+
+                {% if curr_user == highest_bid.bidder %}
+                    <h2> You won the auction!!! </h2>
+                {% endif %}
+                
+            {% endif %}
+        </div>
+    </div>
+    <div class="description">
+        <h2>Description</h2>
+        <p>{{ item.description }}</p>
+    </div>
+    <div class="comments">
+        <h2>Comments</h2>
+        <form action="{% url 'listing' item.id %}" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Add Comment">
+        </form>
+        {% for comment in comments %}
+            <div class="comment-container">
+                <img src="https://freesvg.org/img/abstract-user-flat-1.png" alt="user_icon">
+                <p>{{ comment.comment }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <!-- <a href="">Add Comment</a> -->
+
+
+{% endblock %}

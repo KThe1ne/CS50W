@@ -1,0 +1,106 @@
+html{
+    min-height: 100%;
+}
+
+body{
+    margin: 0px;
+    min-height: 100%;
+    font-family: 'Product Sans', sans-serif;
+    color: white;
+}
+
+.main{
+    display: grid;
+    height: 100vh;
+    grid-template-rows: 40px auto 40px;
+    background-color: #202124;
+}
+
+.top{
+    display: flex;
+    grid-row: 1;
+    justify-self: right;
+    column-gap: 10px;
+    margin-right: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.top button{
+    background-color: #8ab4f8;
+    color: #202124;
+    border: none;
+    border-radius: 2px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    padding: 5px 10px 5px 10px;
+    width: 80px;
+}
+
+.top a:visited, a:link{
+    text-decoration: none;  
+    color: white;
+}
+
+.search{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;    
+}
+
+#logo {
+    text-decoration: none;
+    color: white;
+    font-size: 80px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.images{
+    margin-top: -10px;
+    margin-left: 220px;
+    color: #4487f6;
+}
+
+.searchbuttons{
+    display: flex;
+    padding: 30px ;
+    justify-content: center;
+}
+.searchbuttons > input{
+    border: none;
+    color: #e8eaed;
+    background: #303134;
+    border-radius: 6px;
+    padding: 10px 10px 10px 10px;
+    margin: 5px;
+}
+
+.searchbuttons > input:hover{
+    border: solid #5f6368;
+}
+
+#searchbar{
+    display: block;
+    width: 400px;
+    margin-top: 20px;
+    border: 1px #5f6368 solid;
+    border-radius: 24px;
+    height: 40px;
+    background: #202124;
+}
+
+
+#searchbar:focus{
+    background-color: #303134;
+    border: 1px white;
+
+}
+
+input[type=text]{
+    color: #e8eaed;
+    padding-left: 30px;
+}
+

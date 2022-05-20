@@ -1,0 +1,19 @@
+{% extends "encyclopedia/layout.html" %}
+{% load static %}
+
+{% block title %}{{entry}}{% endblock %}
+
+
+{% block body %}
+    <link rel="stylesheet" href="{% static 'wiki/styles.css' %}">
+    {% with entry=request.path|cut:"/wiki/" %}
+        <div class="editlink"><a href="{% url 'editPage' entry %}">Edit Page</a></div>
+    {% endwith %}
+    {% if wiki %}
+        <div>{{wiki|safe}}</div>
+    {% else %}
+        <h1>Error: Page does not exist.</h1>
+    {% endif%}
+    
+{% endblock %}
+

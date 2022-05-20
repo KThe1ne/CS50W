@@ -1,0 +1,11 @@
+
+
+
+.edit label{
+    display: block;
+    font-weight: bold;
+}
+
+.edit input[type="text"]{
+    min-width: 40%;
+}

@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <link rel="stylesheet" href="{% static 'newListing/styles.css' %}">
+    <form action="{% url 'newListing' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Add New Listing">
+    </form>
+
+{% endblock %}

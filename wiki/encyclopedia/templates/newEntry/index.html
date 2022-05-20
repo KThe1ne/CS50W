@@ -1,0 +1,18 @@
+{% extends "encyclopedia/layout.html"%}
+{% load static %}
+
+{% block title %}New Entry{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="{% static 'newEntry/styles.css'%}">
+    {% if error %}
+        <h3>Entry with title "{{form.cleaned_data.title}}" already exists. Please Try Again.</h3><br>
+    {% endif %}
+
+    <form class="newentry" action="{% url 'newentry' %}" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Create New Page">
+    </form>
+
+{% endblock %}

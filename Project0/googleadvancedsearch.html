@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Search</title>
+        <link rel="stylesheet" href="advancedsearch.css">
+        <link href="http://fonts.cdnfonts.com/css/product-sans" rel="stylesheet">
+    </head>
+    <body>
+        <div class="main">
+            <div class="top">
+                <a href="googleimagesearch.html">Images</a>
+                <a href="index.html">Google</a>
+                <button class="signin">Sign In</button>
+            </div>
+            <div class="search">
+                <h1 id="title">Advanced Search</h1>
+                <hr>
+                <form action="https://www.google.com/search">
+                    <h3>Find Pages With...</h3>
+                    <div class="textfield">
+                        <div>
+                            <label for="all">all these words:</label>
+                            <input type="text" name="as_q">
+                        </div>
+                        <div>
+                            <label>this exact word or phrase:</label>
+                            <input type="text" name="as_epq">
+                        </div>
+                        <div>
+                            <label>any of these words:</label>
+                            <input type="text" name="as_oq">
+                        </div>
+                        <div>
+                            <label>none of these words:</label>
+                            <input type="text" name="as_eq">
+                        </div>
+                    </div>
+                    <div class="searchbuttons">
+                        <input type="submit" value="Advanced Search">
+                    </div> 
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

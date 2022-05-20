@@ -1,0 +1,15 @@
+{% extends "encyclopedia/layout.html"%}
+{% load static %}
+
+{% block title %}Edit Page{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="{% static 'editPage/styles.css'%}">
+
+    <form class="edit" action="{% url 'editPage' entry %}" method='POST'>
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Save Changes">
+    </form>
+
+{% endblock %}
