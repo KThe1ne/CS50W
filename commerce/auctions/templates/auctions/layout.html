@@ -48,8 +48,7 @@
             </ul>
             <div class="status">
                 {% if user.is_authenticated %}
-                    Signed in as <br>
-                    <strong>{{ user.username }}</strong>
+                    Signed in as {{ user.username }}
                 {% else %}
                     Not signed in.
                 {% endif %}
