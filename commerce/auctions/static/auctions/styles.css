@@ -1,12 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Koulen&display=swap');
+
 :root{
     --primary: #44AF69; 
     --secondary: #F8333C;
     --tertiary: #FCAB10;
 }
 
-
 body {
+    padding: 0px;
     width: 100%;
+    box-sizing: border-box;  
+}
+
+body > *{
+    font-family:'Roboto Slab', serif;
+}
+
+.logo{
+    font-family: 'Koulen', cursive;
+}
+
+.logo > h1{
+    line-height: 0.5;
+    font-size: 2rem;
+}
+
+.header{
+    display: flex;
+    background-color: var(--secondary);
     padding: 10px;
-    box-sizing: border-box;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.nav{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.nav a{
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.nav a:hover{
+    font-size: 1.1rem;
+}
+
+.status{
+    display: flex;
+    line-height: 1;
+    min-width: 15ch;
+    justify-content: center;
+    align-items: center;
+    font-size: small;
 }

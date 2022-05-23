@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block body%}
-    <ul>
+    <link rel="stylesheet" href="{% static 'categories/styles.css' %}">
+    <ul class="categories">
         {% for category in categories %}
             <li><a href="{% url 'categoryListing' category %}">{{ category }}</a></li>
         {% endfor %}

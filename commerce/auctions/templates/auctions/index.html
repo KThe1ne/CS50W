@@ -2,28 +2,50 @@
 {% load static %}
 
 {% block body %}
+    {% if listings|length > 4 %}
+        <style>
+            :root{
+                    --listing_cols: 4;     
+            }
+        </style>
+    {% else %}
+        <style>
+            :root{
+                    --listing_cols: {{ listings|length }}  
+            }
+        </style>
+    {% endif %}
     <link rel="stylesheet" href="{% static 'index/styles.css' %}">
-    <h2>Active Listings</h2>
     <div class="container">
         {% for listing in listings %}
             <div class="item_card">
                 {% if listing.img_link %}
                     <img src="{{ listing.img_link }}">
                 {% else %}
-                    <div class="no_img">No Image</div>
+                    <div class="logo image sml">
+                        <div>
+                            <h1>The Auctioneer</h1>
+                            <p>No Image</p>
+                        </div>
+                    </div>
                 {% endif %}
                 <div class="item_details">
-                    <a class="item_title" href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
-                    {% if highest_bid %}
-                        <h4>${{ highest_bid }}</h4>
-                    {% else %}
-                        <h4>${{ listing.starting_bid }}</h4>
-                    {% endif %}
-                    <div class="category">
-                        <a href="{% url 'categoryListing' listing.category %}"> {{ listing.category }} </a>
+                    <div class="item_details initial">
+                        <a class="item_title" href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
+                        {% if highest_bid %}
+                            <h5>${{ highest_bid }}</h5>
+                        {% else %}
+                            <h5>${{ listing.starting_bid }}</h5>
+                        {% endif %}
                     </div>
-                    <p>{{ listing.description }}</p>
-                    <a href="{% url 'listing' listing.id %}">View Listing</a>
+                    <div class="item_details after">
+                        <p class="description">{{ listing.description }}</p>
+                        <!-- <p class="description">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repellat iusto deserunt laudantium dignissimos amet, cumque perferendis temporibus placeat harum, assumenda tenetur blanditiis quis quas inventore ratione natus. Eos, temporibus dicta!</p> -->
+                        <div class="category">
+                            <a href="{% url 'categoryListing' listing.category %}"> {{ listing.category }} </a>
+                        </div>
+                        <a id="viewlisting" href="{% url 'listing' listing.id %}">View Listing</a>
+                    </div>
                 </div>
             </div>
         {% endfor %}

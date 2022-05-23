@@ -18,7 +18,7 @@ class addListingForm(forms.Form):
     title = forms.CharField(label="Title")
     starting_bid = forms.IntegerField(label="Starting Bid")
     category = forms.CharField(label="Category")
-    img_link = forms.URLField(label="Image Link")
+    img_link = forms.URLField(label="Image Link", required=False)
     description = forms.CharField(label="Description", widget=forms.Textarea(attrs={'rows': 4, 'cols':100}))
 
 
@@ -28,6 +28,7 @@ def index(request):
 
     return render(request, "auctions/index.html",{
         "listings": listings,
+        "page": "Active Listings"
     })
 
 
@@ -102,6 +103,7 @@ def new_listing(request):
 
     return render(request, "newListing/index.html", {
         "form": addListingForm,
+        "page": "Add New Listing"
     })
 
 def listing_view(request, listing_id):
@@ -115,36 +117,38 @@ def listing_view(request, listing_id):
     
     if request.method == "POST":
 
-        if ("bid" in request.POST):
+        if (curr_user.is_authenticated):
 
-            bid_amount = int(request.POST["bid"])
+            if ("bid" in request.POST):
 
-            if (bid_amount > highest_bid(list_item)): # Get highest bid again for server-sdie check in case another bid was successful before the client-side is updated.
-                            
-                new_bid = Bid(bid=bid_amount, bidder=curr_user, listing=list_item)
-                new_bid.save()
+                bid_amount = int(request.POST["bid"])
 
-
-        elif ("addtowatchlist" in request.POST):
-
-            list_item.watchlist.add(curr_user)
-
-        elif ("removefromwatchlist" in request.POST):
-
-            list_item.watchlist.through.objects.filter(user_id = curr_user.id).delete() 
-
-        elif ("closeauction" in request.POST):
-        
-            list_item.active = False
-            list_item.save()
-        
-        elif ("comment" in request.POST):
-
-            new_comment = Comment(creator=curr_user,listing=list_item,comment=request.POST["comment"])
-            new_comment.save()
+                if (bid_amount > highest_bid(list_item)): # Get highest bid again for server-sdie check in case another bid was successful before the client-side is updated.
+                                
+                    new_bid = Bid(bid=bid_amount, bidder=curr_user, listing=list_item)
+                    new_bid.save()
 
 
-        return HttpResponseRedirect(reverse("listing", args=[listing_id]))
+            elif ("addtowatchlist" in request.POST):
+
+                list_item.watchlist.add(curr_user)
+
+            elif ("removefromwatchlist" in request.POST):
+
+                list_item.watchlist.through.objects.filter(user_id = curr_user.id).delete() 
+
+            elif ("closeauction" in request.POST):
+            
+                list_item.active = False
+                list_item.save()
+            
+            elif ("comment" in request.POST):
+
+                new_comment = Comment(creator=curr_user,listing=list_item,comment=request.POST["comment"])
+                new_comment.save()
+
+
+            return HttpResponseRedirect(reverse("listing", args=[listing_id]))
 
 
     return render(request, "listing/index.html",{
@@ -153,7 +157,8 @@ def listing_view(request, listing_id):
         "comments": comments,
         "watchlisted": list(list_item.watchlist.filter(id = curr_user.id)),  #Checks if item is watchlisted by current user. 'filter' is used to ensure that error is not thrown if the item is not watchlisted
         "curr_user": curr_user,
-        "form": addCommentForm
+        "form": addCommentForm,
+        "page": ""
     })
 
 def highest_bid(item):
@@ -170,7 +175,8 @@ def watchlist(request):
     watchlist_listings = curr_user.watchlisted.all()
 
     return render(request, "auctions/index.html",{
-        "listings": watchlist_listings
+        "listings": watchlist_listings,
+        "page": "Your Watchlist"
     })
 
 def categories(request):
@@ -180,6 +186,7 @@ def categories(request):
 
     return render(request, "categories/index.html",{
         "categories": categories,
+        "page": "Categories"
     })
 
 def category_listing(request, category_name):
@@ -188,4 +195,5 @@ def category_listing(request, category_name):
 
     return render(request, "auctions/index.html",{
         "listings": category_listing,
+        "page": "Active Listings"
     })

@@ -17,13 +17,21 @@
         </form>
     {% endif %}
     <div class="container"> 
-
-        <img src="{{ item.img_link }}">
-
+        
+        {% if item.img_link %}
+            <img class="product_image" src="{{ item.img_link }}">
+        {% else %}
+            <div class="logo image">
+                    <div>
+                        <h1>The Auctioneer</h1>
+                        <p>No Image</p>
+                    </div>
+            </div>
+        {% endif %}
         <div class="shop_section">
 
             <h4>{{ item.title }}</h4>
-            <h5>{{ item.creator }}</h5>
+            <h6>Seller: {{ item.creator }}</h6><br>
             <div class="bid_data">
                 <h5>Starting Bid: {{ item.starting_bid }}</h5>
                 {% if highest_bid %}
@@ -42,8 +50,14 @@
                     {% elif user.is_authenticated %}
                         <input type="number" name="bid" min="{{ highest_bid }}">
                         <input type="submit" value="Make Bid">
+                    {% else %}
+                        <a href="{% url 'login' %}">Login To Place Your Bid</a>
                     {% endif %}
                 </form>
+                <div class="description">
+                    <h2>Description</h2>
+                    <p>{{ item.description }}</p>
+                </div>
             {% else %}
 
                 {% if curr_user == highest_bid.bidder %}
@@ -53,17 +67,16 @@
             {% endif %}
         </div>
     </div>
-    <div class="description">
-        <h2>Description</h2>
-        <p>{{ item.description }}</p>
-    </div>
+   
     <div class="comments">
         <h2>Comments</h2>
-        <form action="{% url 'listing' item.id %}" method="POST">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" value="Add Comment">
-        </form>
+        {% if user.is_authenticated %}
+            <form action="{% url 'listing' item.id %}" method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="Add Comment">
+            </form>
+        {% endif %}
         {% for comment in comments %}
             <div class="comment-container">
                 <img src="https://freesvg.org/img/abstract-user-flat-1.png" alt="user_icon">
