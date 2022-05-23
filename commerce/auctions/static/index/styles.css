@@ -98,6 +98,7 @@ h2{
     width: 100%; 
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     background-color: var(--tertiary);
     color: white;
 }

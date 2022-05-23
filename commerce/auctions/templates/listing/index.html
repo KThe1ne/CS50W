@@ -23,7 +23,7 @@
         <div class="shop_section">
 
             <h4>{{ item.title }}</h4>
-            <h5>{{ item.creator }}</h5>
+            <h6>Seller: {{ item.creator }}</h6><br>
             <div class="bid_data">
                 <h5>Starting Bid: {{ item.starting_bid }}</h5>
                 {% if highest_bid %}
@@ -42,8 +42,14 @@
                     {% elif user.is_authenticated %}
                         <input type="number" name="bid" min="{{ highest_bid }}">
                         <input type="submit" value="Make Bid">
+                    {% else %}
+                        <a href="{% url 'login' %}">Login</a>
                     {% endif %}
                 </form>
+                <div class="description">
+                    <h2>Description</h2>
+                    <p>{{ item.description }}</p>
+                </div>
             {% else %}
 
                 {% if curr_user == highest_bid.bidder %}
@@ -53,10 +59,7 @@
             {% endif %}
         </div>
     </div>
-    <div class="description">
-        <h2>Description</h2>
-        <p>{{ item.description }}</p>
-    </div>
+   
     <div class="comments">
         <h2>Comments</h2>
         <form action="{% url 'listing' item.id %}" method="POST">

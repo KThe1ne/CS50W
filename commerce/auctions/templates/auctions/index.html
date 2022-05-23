@@ -16,14 +16,6 @@
         </style>
     {% endif %}
     <link rel="stylesheet" href="{% static 'index/styles.css' %}">
-    <div class="banner">
-        <div>
-            <h2>One Stop Shop</h2>
-            <p> </p>
-        </div>
-        <img src="{% static 'images/banner.jpg' %}">
-    </div>
-    <h2>Active Listings</h2>
     <div class="container">
         {% for listing in listings %}
             <div class="item_card">

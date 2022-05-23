@@ -9,7 +9,11 @@
 body {
     padding: 0px;
     width: 100%;
-    box-sizing: border-box;
+    box-sizing: border-box;  
+}
+
+body > *{
+    font-family:'Roboto Slab', serif;
 }
 
 .logo{
@@ -26,6 +30,7 @@ body {
     background-color: var(--secondary);
     padding: 10px;
     color: white;
+    margin-bottom: 10px;
 }
 
 .nav{
@@ -37,7 +42,6 @@ body {
 .nav a{
     text-decoration: none;
     color: white;
-    font-family: 'Roboto Slab', serif;
     font-weight: bold;
 }
 
@@ -47,7 +51,6 @@ body {
 
 .status{
     display: flex;
-    font-family: 'Roboto Slab', serif;
     line-height: 1;
     min-width: 15ch;
     justify-content: center;

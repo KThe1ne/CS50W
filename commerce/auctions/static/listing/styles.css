@@ -1,34 +1,42 @@
 .watchlist{
     display: flex;
     justify-content: right;
+    margin-right: 20px;
+}
+
+.watchlist input[type="submit"]{
+    border: none;
+    background-color: var(--tertiary);
 }
 
 .container{
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    grid-template-rows: 50vh;
+    grid-template-columns: minmax(500px,2fr) minmax(300px,1fr);
+    grid-template-rows: 75vh;
     min-width: 100%;
     column-gap: 10px;
     grid-auto-flow: row;
     grid-auto-rows: 50vh;
+    margin-top: 20px;
 }
 
-.img{
-    grid-column-start: 1;
-    border-right: 2px solid grey;
-    padding: 10px;
-}
 
 img{
-    min-width: 200px;
-    width: 100%;
+    min-width: 500px;
+    max-width: 700px;
+    margin: auto;
     height: 100%;
+    aspect-ratio: 16/9;
 }
 
 .shop_section{
-    grid-column: 2 / span 2;
+    margin: auto;
+    grid-column: 2 / auto;
     text-align: center;
-    border-left: 1px solid grey;
+}
+
+.shop_section h4{
+    font-weight: bold;
 }
 
 .shop_section > *{
@@ -36,6 +44,7 @@ img{
 }
 
 .bid_data {
+    min-width: 500px;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -45,8 +54,8 @@ img{
     margin: 20px auto 20px auto;
     padding: 10px 0px 10px 0px;
     width: 70%;
-    border-bottom: 1px solid grey;
-    border-top: 1px solid grey;
+    border-bottom: 1px solid var(--secondary);
+    border-top: 1px solid var(--secondary);
 }
 
 .description h2,p{

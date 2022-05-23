@@ -28,6 +28,7 @@ def index(request):
 
     return render(request, "auctions/index.html",{
         "listings": listings,
+        "page": "Active Listings"
     })
 
 
@@ -102,6 +103,7 @@ def new_listing(request):
 
     return render(request, "newListing/index.html", {
         "form": addListingForm,
+        "page": "Add New Listing"
     })
 
 def listing_view(request, listing_id):
@@ -153,7 +155,8 @@ def listing_view(request, listing_id):
         "comments": comments,
         "watchlisted": list(list_item.watchlist.filter(id = curr_user.id)),  #Checks if item is watchlisted by current user. 'filter' is used to ensure that error is not thrown if the item is not watchlisted
         "curr_user": curr_user,
-        "form": addCommentForm
+        "form": addCommentForm,
+        "page": ""
     })
 
 def highest_bid(item):
@@ -170,7 +173,8 @@ def watchlist(request):
     watchlist_listings = curr_user.watchlisted.all()
 
     return render(request, "auctions/index.html",{
-        "listings": watchlist_listings
+        "listings": watchlist_listings,
+        "page": "Your Watchlist"
     })
 
 def categories(request):
@@ -180,6 +184,7 @@ def categories(request):
 
     return render(request, "categories/index.html",{
         "categories": categories,
+        "page": "Categories"
     })
 
 def category_listing(request, category_name):
@@ -188,4 +193,5 @@ def category_listing(request, category_name):
 
     return render(request, "auctions/index.html",{
         "listings": category_listing,
+        "page": "Active Listings"
     })
