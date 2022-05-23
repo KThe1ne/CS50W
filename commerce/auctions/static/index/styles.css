@@ -42,6 +42,28 @@ h2{
     max-width: 300px;
 }
 
+.logo.image{
+    background-color: var(--secondary);
+    position: relative;
+}
+
+.logo.image > *{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+}
+
+.logo.image.sml > div > *{
+    min-width: max-content;
+    text-align: center;
+}
+
+.logo.image.sml > div > h1{
+    font-size: 2rem;
+}
+
 .item_title{
     font-weight: bold;
     font-size: 20px;
@@ -149,31 +171,3 @@ h2{
     animation: slideup 0.3s ease-out forwards;
 }
 
-
-
-/*
-.item_card p{
-    max-width: 40ch;
-    font-size: 1em;
-}
-
-
-
-.category a{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin: 0px;
-    text-decoration: none;
-    color: white;
-}
-
-.no_img{
-    height: 100%;
-    width: 200px;
-    text-align: center;
-    padding-top: auto;
-    padding-bottom: auto;
-    background-color: beige;
-} */

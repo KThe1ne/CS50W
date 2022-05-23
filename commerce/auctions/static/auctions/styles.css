@@ -20,7 +20,7 @@ body > *{
     font-family: 'Koulen', cursive;
 }
 
-.logo h1{
+.logo > h1{
     line-height: 0.5;
     font-size: 2rem;
 }

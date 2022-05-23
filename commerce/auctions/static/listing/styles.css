@@ -4,7 +4,7 @@
     margin-right: 20px;
 }
 
-.watchlist input[type="submit"]{
+.watchlist input[type="submit"], .comments input[type="submit"]{
     border: none;
     background-color: var(--tertiary);
 }
@@ -21,12 +21,29 @@
 }
 
 
-img{
+.product_image{
     min-width: 500px;
     max-width: 700px;
     margin: auto;
     height: 100%;
     aspect-ratio: 16/9;
+}
+
+.logo.image{
+    background-color: var(--secondary);
+    position: relative;
+}
+
+.logo.image *{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+}
+
+.logo.image > h1{
+    font-size: 1rem;
 }
 
 .shop_section{
@@ -58,7 +75,7 @@ img{
     border-top: 1px solid var(--secondary);
 }
 
-.description h2,p{
+.description > h2,p{
     margin: 5px auto 5px auto;
     max-width: 65ch;
     text-align: center;
@@ -73,25 +90,42 @@ img{
 
 .comment-container{
     display: grid;
-    grid-template-columns: 1fr 3fr;
-    grid-template-rows: minmax(50px, max-content);
+    grid-template-columns: 200px 2fr;
+    grid-auto-rows: minmax(100px, max-content);
     width: 70vw;
     margin: 20px auto;
+    box-shadow: 0px 15px 45px rgba(0,0,0,0.1);
+}
+
+.comments > form{
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    row-gap: 5px;
+}
+
+.comments > form > input[type="submit"]{
+    max-width: 15ch;
+    align-self: center;
 }
 
 .comment-container p{
-    grid-column: 2 / span 3;
+    margin: 0px;
+    padding: 5px;
+    min-height: 100%;
+    grid-column: 2 / span 2;
     text-align: left;
-    padding: 0px;
-    width: 100%;
-    margin-left: 10px;
-    padding: 10px;
+    min-width: 100%;
+
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .comment-container img{
+    margin: auto;
     grid-column: 1;
+    max-width: 100px;
     max-height: 100px;
     padding-left: auto;
     padding-right: 0px;
-    object-fit: contain;
+    /* object-fit: contain; */
 }
