@@ -123,7 +123,7 @@ def listing_view(request, listing_id):
 
                 bid_amount = int(request.POST["bid"])
 
-                if (bid_amount > highest_bid(list_item)): # Get highest bid again for server-sdie check in case another bid was successful before the client-side is updated.
+                if (bid_amount > highest_bid(list_item) and bid_amount >= list_item.starting_bid): # Get highest bid again for server-sdie check in case another bid was successful before the client-side is updated.
                                 
                     new_bid = Bid(bid=bid_amount, bidder=curr_user, listing=list_item)
                     new_bid.save()
@@ -163,9 +163,9 @@ def listing_view(request, listing_id):
 
 def highest_bid(item):
     try:
-        return item.bid.all().order_by("bid").last() #Throws an error if no bids are present.
+        return item.bid.all().order_by("bid").last().bid #Throws an error if no bids are present.
     except:
-        return False 
+        return 0
 
 @login_required(login_url="login")
 def watchlist(request):

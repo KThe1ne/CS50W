@@ -4,17 +4,19 @@
 {% block body %}
 
     <link rel="stylesheet" href="{% static 'listing/styles.css' %}">
-    {% if curr_user != item.creator %}
-        <form action="{% url 'listing' item.id %}" method="POST" class="watchlist">
-            {% csrf_token %}
-            {% if watchlisted %}  
-                <input type="checkbox" name="removefromwatchlist" checked hidden>
-                <input type="submit" value="Remove From Watchlist">
-            {% else %}
-                <input type="checkbox" name="addtowatchlist" checked hidden>
-                <input type="submit" value="Add To Watchlist">
-            {% endif %}
-        </form>
+    {% if user.is_authenticated %}
+        {% if curr_user != item.creator %}
+            <form action="{% url 'listing' item.id %}" method="POST" class="watchlist">
+                {% csrf_token %}
+                {% if watchlisted %}  
+                    <input type="checkbox" name="removefromwatchlist" checked hidden>
+                    <input type="submit" value="Remove From Watchlist">
+                {% else %}
+                    <input type="checkbox" name="addtowatchlist" checked hidden>
+                    <input type="submit" value="Add To Watchlist">
+                {% endif %}
+            </form>
+        {% endif %}
     {% endif %}
     <div class="container"> 
         
@@ -34,8 +36,10 @@
             <h6>Seller: {{ item.creator }}</h6><br>
             <div class="bid_data">
                 <h5>Starting Bid: {{ item.starting_bid }}</h5>
-                {% if highest_bid %}
-                    <h5>Last Bid Price: {{ highest_bid.bid }}</h5>
+                {% if highest_bid >= item.starting_bid %}
+                    {% if user.is_authenticated %}
+                        <h5>Last Bid Price: {{ highest_bid }}</h5>
+                    {% endif %}
                 {% else %}
                     <h5>No Bids Yet. Be the first</h5>
                 {% endif %}
@@ -48,7 +52,11 @@
                         <input type="checkbox" name="closeauction" checked hidden>
                         <input type="submit" value="Close Auction">
                     {% elif user.is_authenticated %}
-                        <input type="number" name="bid" min="{{ highest_bid }}">
+                        {% if highest_bid >= item.starting_bid %}
+                            <input type="number" name="bid" min="{{ highest_bid }}">
+                        {% else %}
+                            <input type="number" name="bid" min="{{ item.starting_bid }}">
+                        {% endif %}
                         <input type="submit" value="Make Bid">
                     {% else %}
                         <a href="{% url 'login' %}">Login To Place Your Bid</a>
@@ -67,7 +75,7 @@
             {% endif %}
         </div>
     </div>
-   
+    <br>
     <div class="comments">
         <h2>Comments</h2>
         {% if user.is_authenticated %}

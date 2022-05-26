@@ -2,19 +2,6 @@
 {% load static %}
 
 {% block body %}
-    {% if listings|length > 4 %}
-        <style>
-            :root{
-                    --listing_cols: 4;     
-            }
-        </style>
-    {% else %}
-        <style>
-            :root{
-                    --listing_cols: {{ listings|length }}  
-            }
-        </style>
-    {% endif %}
     <link rel="stylesheet" href="{% static 'index/styles.css' %}">
     <div class="container">
         {% for listing in listings %}
