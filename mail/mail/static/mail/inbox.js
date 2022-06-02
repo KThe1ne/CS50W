@@ -40,9 +40,7 @@ function compose_email() {
     .then(result => {
       console.log(result);
     })
-  }
-
-  
+  }  
 }
 
 function load_mailbox(mailbox) {
@@ -59,6 +57,7 @@ function load_mailbox(mailbox) {
   fetch('/emails/'+ mailbox)
   .then(response => response.json())
   .then(emails => {
+    console.log("Fetched")
     console.log(emails)
     // Create a div element for each email
     for (let i=0; i<emails.length; i++){
@@ -72,19 +71,12 @@ function load_mailbox(mailbox) {
     const emailContainerSelector = document.querySelectorAll(".email-container");
 
     emailContainerSelector.forEach(function(container, i) { 
-      if (mailbox === 'inbox'){
         container.innerHTML = `<h5>From: ${emails[i]["recipients"].toString()}</h5>
                               <h6>${emails[i]["subject"]}</h6>
                               <p>${emails[i]["body"]}</p>`;
-      }
-      else if (mailbox === 'sent'){
-        container.innerHTML = `<h5>To: ${emails[i]["recipients"].toString()}</h5>
-      <h6>${emails[i]["subject"]}</h6>
-      <p>${emails[i]["body"]}</p>`;
-      }
       
       // Change condition to read vs unread
-      if (i % 2 === 0){
+      if (emails['read'] === false){
         container.style.backgroundColor = '#ededed';
       }
 
@@ -116,28 +108,58 @@ function emailClick(email, mailbox){
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#email').style.display = 'block';
 
-    if (mailbox === 'inbox'){
-      document.querySelector('#email').innerHTML = 
+    // Define content of 'div' 
+    document.querySelector('#email-details').innerHTML = 
       `
         <h5>${email["subject"]}</h5>
+        <hr>
         <br>
         <h5>${email["sender"]} <span id="timestamp">${email["timestamp"]}</span></h5>
-        <p>to Me</p>
-        <br>
-        <p>${email["body"]}</p>
-      `
-    }
-    else if (mailbox === 'sent'){
-      document.querySelector('#email').innerHTML = 
-      `
-        <h5>${email["subject"]}</h5>
-        <br>
-        <h6>${email["sender"]} <span id="timestamp">${email["timestamp"]}</span></h6>
         <p>to ${email["recipients"].toString()}</p>
         <br>
         <p>${email["body"]}</p>
       `
-    }
+
+    // Reduce font of timestamp
     document.querySelector("#timestamp").style.fontSize = '0.5em';
+
+    // Change text of button depending on archive status
+    if (email["archived"] === true){
+      document.querySelector("#archiveBtn").innerHTML = 'Unarchive';
+    }
+    else{
+      document.querySelector("#archiveBtn").innerHTML = 'Archive';
+    }
+
+    // Remove archive button for emails sent by user
+    if (mailbox === 'sent'){
+      document.querySelector("#archiveBtn").style.display = 'none';
+    } 
   }
+
+  document.querySelector('#archiveBtn').onclick = function() {
+
+    if (email["archived"] === false){
+      fetch('emails/'+email.id, {
+        method: 'PUT',
+        body: JSON.stringify({
+            archived: true
+        })
+      })
+      .then(() => load_mailbox('inbox'));
+    }
+
+    else{
+      fetch('emails/'+email.id, {
+        method: 'PUT',
+        body: JSON.stringify({
+            archived: false
+        })
+      })
+      .then(() => load_mailbox('inbox'));
+    }
+    
+  }
+
 }
+
