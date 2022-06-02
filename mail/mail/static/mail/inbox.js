@@ -161,5 +161,30 @@ function emailClick(email, mailbox){
     
   }
 
+  document.querySelector('#replyBtn').onclick = () => reply(email, mailbox)
+}
+
+function reply(email, mailbox) {
+
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#email').style.display ='none';
+  document.querySelector('#compose-view').style.display = 'block';
+  
+  if (mailbox === 'sent'){
+    document.querySelector('#compose-recipients').value = email.recipients.toString();
+  }
+  else{
+    document.querySelector('#compose-recipients').value = email.sender;
+  }
+
+  if (email['subject'].slice(0, 3) !== 'Re:'){
+    document.querySelector('#compose-subject').value = 'Re: ' + email['subject'];
+  }
+  else{
+    document.querySelector('#compose-subject').value = email['subject'];
+  }
+
+  document.querySelector('#compose-body').value = `On ${email['timestamp']}, ${email['sender']} wrote: ${email['body']}
+  `;
 }
 
