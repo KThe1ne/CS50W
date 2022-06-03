@@ -21,13 +21,16 @@ function compose_email() {
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
 
-  // Email POST request
+ 
+  document.querySelector('#compose-form').onsubmit = () => sendEmail();
+  
+}
 
-  document.querySelector('#compose-form').onsubmit = function(){
+function sendEmail(){
     const recipients = document.querySelector('#compose-recipients').value;
     const subject = document.querySelector("#compose-subject").value;
     const body = document.querySelector("#compose-body").value;
-
+    
     fetch('/emails', {
       method: 'POST',
       body: JSON.stringify({
@@ -40,7 +43,6 @@ function compose_email() {
     .then(result => {
       console.log(result);
     })
-  }  
 }
 
 function load_mailbox(mailbox) {
@@ -71,7 +73,8 @@ function load_mailbox(mailbox) {
     const emailContainerSelector = document.querySelectorAll(".email-container");
 
     emailContainerSelector.forEach(function(container, i) { 
-        container.innerHTML = `<h5>From: ${emails[i]["recipients"].toString()}</h5>
+        container.innerHTML = `<h5>From: ${emails[i]["sender"]}</h5>
+                              <p>${emails[i]["timestamp"]}</p>
                               <h6>${emails[i]["subject"]}</h6>
                               <p>${emails[i]["body"]}</p>`;
       
@@ -184,7 +187,8 @@ function reply(email, mailbox) {
     document.querySelector('#compose-subject').value = email['subject'];
   }
 
-  document.querySelector('#compose-body').value = `On ${email['timestamp']}, ${email['sender']} wrote: ${email['body']}
-  `;
+  document.querySelector('#compose-body').value = `On ${email['timestamp']}, ${email['sender']} wrote: ${email['body']}` + '\n';
+
+  document.querySelector('#compose-form').onsubmit = () => sendEmail();
 }
 
