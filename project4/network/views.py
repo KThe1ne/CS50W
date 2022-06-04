@@ -1,14 +1,45 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
-from .models import User
+from .models import User, Post
+
+class newPostForm(forms.Form):
+    newPost = forms.CharField(label="", widget=forms.Textarea(attrs={'class': 'newPost', 'cols': 80, 'rows': 5}))
 
 
 def index(request):
-    return render(request, "network/index.html")
+
+    currUser = request.user
+
+    if request.method == 'POST':
+        
+        if ("newPost" in request.POST):
+
+            if (currUser.is_authenticated):
+
+                form = newPostForm(request.POST)
+
+                if (form.is_valid()):
+
+                    post = Post(
+                        user = currUser,
+                        content = form.cleaned_data["newPost"],
+                        )
+                    post.save()
+                    
+                    
+    posts = Post.objects.all()
+    posts.reverse()
+
+    return render(request, "network/index.html",{
+            "posts": posts,
+            "postForm": newPostForm()
+        })
 
 
 def login_view(request):

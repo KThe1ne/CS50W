@@ -6,17 +6,37 @@
         <title>{% block title %}Social Network{% endblock %}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link href="{% static 'network/styles.css' %}" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
+        <style>
+            .brand-image{
+                background-image: url("{% static 'icon.png' %}");
+                aspect-ratio: 3/1;
+                height: 50px;
+                background-position: center;
+                background-size: contain;
+                background-repeat: no-repeat;
+                margin: 0px;
+                padding: 0px;
+            }
+        </style>
     </head>
     <body>
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">Network</a>
+            <a class="navbar-brand" href="#">
+                <div class="brand-image">
+                </div>
+            </a>
           
             <div>
               <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+                        <div>
+                            <!-- Set with JS -->
+                            <!-- <div class="profile-icon">B</div>  -->
+                            <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+                        </div>
                     </li>
                 {% endif %}
                 <li class="nav-item">
@@ -42,6 +62,8 @@
           </nav>
         
         <div class="body">
+            // Retrieve each page from the server and use JS to load each post page 
+            {% block pageTitle %}{% endblock %}
             {% block body %}
             {% endblock %}
         </div>
