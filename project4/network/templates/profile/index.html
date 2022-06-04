@@ -1,0 +1,28 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block pageTitle%}Profile Page{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="{% static 'profile/styles.css'%}">
+    <div class="profile-container">
+        <!-- Use javascript to hide button if a user is on their own profile also to change Follow to Unfollow if the user already follows this profile -->
+        <button class="followBtn">Follow</button>
+        <h2 class="profile-username">{{profile.username}}</h2>
+        <div class="profile-details">
+            <p>Followers: <strong>{{profile.userFollowers.all|length}}</strong></p>
+            <p>Following: <strong>{{profile.userFollows.all|length}}</strong></p>
+        </div>
+        <div class="profile-posts">
+            {% for post in profile.posts.all %}
+                <div>
+                    <h5>{{post.user}}</h5>
+                    <p>{{post.timestamp|date:"D d M Y"}}</p>
+                </div>
+                <p>{{post.content}}</p> 
+            {% endfor %}
+        </div>
+        <!-- Use javascript to display a page with posts made by all the users this profile follows -->
+        <div class="following"></div>
+    </div>
+{% endblock %}

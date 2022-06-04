@@ -33,7 +33,7 @@ def index(request):
                     post.save()
                     
                     
-    posts = Post.objects.all()
+    posts = list(Post.objects.all())
     posts.reverse()
 
     return render(request, "network/index.html",{
@@ -41,6 +41,13 @@ def index(request):
             "postForm": newPostForm()
         })
 
+def profilePage(request, name):
+
+    profile = User.objects.get(username = name)
+
+    return render(request, "profile/index.html",{
+        "profile": profile
+    })
 
 def login_view(request):
     if request.method == "POST":

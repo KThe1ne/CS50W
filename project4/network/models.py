@@ -3,8 +3,8 @@ from django.db import models
 
 
 class User(AbstractUser):
-    userFollowers = models.ManyToManyField('self', blank=True, related_name="follows")
-    userFollows = models.ManyToManyField('self', blank=True, related_name="followers")
+    userFollowers = models.ManyToManyField('self', blank=True, related_name="follows", symmetrical=False)
+    userFollows = models.ManyToManyField('self', blank=True, related_name="followers",symmetrical=False)
 
 class Post(models.Model):
 
