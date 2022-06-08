@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
@@ -46,8 +46,27 @@ def profilePage(request, name):
     profile = User.objects.get(username = name)
 
     return render(request, "profile/index.html",{
-        "profile": profile
+        "profile": profile,
     })
+
+def flatten(arr):
+    
+    return [ele for arr1 in arr for ele in arr1]
+
+
+@login_required
+def followersPosts(request, name):
+
+    profile = User.objects.get(username = name)
+    followers = profile.userFollows.all()
+    followersPosts = [(Post.objects.filter(user = follower)) for follower in followers]
+
+    followersPosts = flatten(followersPosts)
+
+    return render(request, "following/index.html",{
+        "followersPosts": followersPosts
+    })
+
 
 def login_view(request):
     if request.method == "POST":

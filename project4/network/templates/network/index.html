@@ -15,9 +15,11 @@
         <div id="allPosts">
             {% for post in posts %}
                 <div class="post">
-                    <div class="edit">
-                        <button id="editBtn">Edit</button>
-                    </div>
+                    {% if user.is_authenticated %}
+                        <div class="edit">
+                            <button id="editBtn">Edit</button>
+                        </div>
+                    {% endif %}
                     <div>
                         <h5>{{post.user}}</h5>
                         <p>{{post.timestamp|date:"D d M Y"}}</p>
