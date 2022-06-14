@@ -92,3 +92,28 @@ body{
     color: white;
 }
 
+.profile-container{
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 10px;
+    margin: 5px;
+}
+
+.followBtn{
+    grid-column: 3;
+    width: 30%;
+    margin-right: 5px;
+    margin-left: auto;
+}
+
+.profile-username{
+    grid-column: 1 / span 3;
+}
+
+.profile-details{
+    grid-column: 1;
+}
+
+.profile-posts{
+    grid-column: 2;
+}

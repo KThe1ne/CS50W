@@ -6,6 +6,14 @@ class User(AbstractUser):
     # userFollowers = models.ManyToManyField('self', blank=True, related_name="follows", symmetrical=False)
     userFollows = models.ManyToManyField('self', blank=True, related_name="followers",symmetrical=False)
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "userFollows": [user.id for user in self.userFollows.all()]
+        }
+
 class Post(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
@@ -16,8 +24,8 @@ class Post(models.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "creator": self.user.id,
+            "creator": [self.user.username, self.user.id],
             "content": self.content,
             "likes": [user.id for user in self.likes.all()],
-            "timestamp": self.timestamp
+            "timestamp": self.timestamp.strftime("%a %b %d %Y, %I:%M %p"),
         }

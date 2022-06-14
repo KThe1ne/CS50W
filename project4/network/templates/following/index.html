@@ -3,15 +3,7 @@
 
 {% block body %}
 
-    <div class="followers post">
-        {% for post in followersPosts %}
-            <div>
-                <h5>{{post.user}}</h5>
-                <p>{{post.timestamp|date:"D d M Y"}}</p>
-            </div>
-            <p>{{post.content}}</p>
-        {% endfor %}
-    </div>
+   
     
 
 {% endblock %}

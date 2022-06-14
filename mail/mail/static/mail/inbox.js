@@ -59,8 +59,6 @@ function load_mailbox(mailbox) {
   fetch('/emails/'+ mailbox)
   .then(response => response.json())
   .then(emails => {
-    console.log("Fetched")
-    console.log(emails)
     // Create a div element for each email
     for (let i=0; i<emails.length; i++){
 

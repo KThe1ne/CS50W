@@ -31,23 +31,29 @@ def index(request):
                         content = form.cleaned_data["newPost"],
                         )
                     post.save()
-                    
-                    
+    
+    """ posts = list(Post.objects.all())
+    posts.reverse()
+    test = [post.serialize() for post in posts] """
+    
+    return render(request, "network/index.html",{
+        "postForm": newPostForm
+    })
+
+def allPosts(request):
+                          
     posts = list(Post.objects.all())
     posts.reverse()
+    test = [post.serialize() for post in posts]
+    
+    return JsonResponse({"allPosts":[post.serialize() for post in posts], "user": request.user.serialize()}, safe=False)
 
-    return render(request, "network/index.html",{
-            "posts": posts,
-            "postForm": newPostForm()
-        })
 
 def profilePage(request, name):
 
     profile = User.objects.get(username = name)
 
-    return render(request, "profile/index.html",{
-        "profile": profile,
-    })
+    return JsonResponse(profile.serialize())
 
 def flatten(arr):
     
@@ -63,9 +69,7 @@ def followersPosts(request, name):
 
     followersPosts = flatten(followersPosts)
 
-    return render(request, "following/index.html",{
-        "followersPosts": followersPosts
-    })
+    return JsonResponse([post.serialize() for post in followersPosts])
 
 
 def login_view(request):
