@@ -26,14 +26,13 @@ function showPosts(postsType){
         .then(response => response.json())
         .then(sentData => {
             const posts = sentData.allPosts;
-            console.log(posts)
             for (let i=0; i<posts.length; i++){
                 const postContainer = document.createElement('div');
                 postContainer.className = "post " + i;
                 document.querySelector("#allPosts").append(postContainer);
             }
 
-            const postSelector = document.querySelectorAll(".post");
+            const postSelector = document.querySelectorAll("#allPosts > .post");
             console.log(postSelector)
 
             postSelector.forEach((container,i) => {
@@ -54,7 +53,14 @@ function showPosts(postsType){
                             <button id="likeBtn">Like</button>
                         </div>
                     </div>
-                `
+                `;
+
+                
+
+                if (sentData.user.id !== posts[i]["creator"][1]){
+                    container.querySelector(".edit").style.display = 'none';
+                }
+
             })
 
             console.log(allPostsContainer)
@@ -65,4 +71,9 @@ function showPosts(postsType){
         })
 
     }
+
+    if (postsType === 'allPosts'){
+        
+    }
+
 }
