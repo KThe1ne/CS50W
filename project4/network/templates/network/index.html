@@ -16,39 +16,17 @@
                     <input id="post-submit" type="submit" value="Post">
                 </form>
             </div>
-            <div id="allPosts">
-                <!-- <div class="post">
-                    {% if user.is_authenticated %}
-                        <div class="edit">
-                            <button id="editBtn">Edit</button>
-                        </div>
-                    {% endif %}
-                    <div class="post-details">
-                        <h5>{{post.user}}</h5>
-                        <p>{{post.timestamp|date:"D d M Y"}}</p>
-                    </div>
-                    <p class="post-content">{{post.content}}</p>
-    
-                    <div class="likes">
-                        <div id="like-counter">
-                            <img src="#">
-                            <p>{{post.likes.all|length}}</p>
-                            <button id="likeBtn">Like</button>
-                        </div>
-                    </div>
-                </div> -->
+            <div id="allPosts" class="all posts">
+                <!-- Add Posts here -->
             </div>
             
-            <div id="followingPosts" class="followers post">
-                {% for post in followersPosts %}
-                    <div>
-                        <h5>{{post.user}}</h5>
-                        <p>{{post.timestamp|date:"D d M Y"}}</p>
-                    </div>
-                    <p>{{post.content}}</p>
-                {% endfor %}
+            <div id="followingPosts" class="followers posts">
             </div>
 
+            <div class="pagination-bar">
+                <button class="previousBtn">Previous</button>
+                <button class="nextBtn">Next</button>
+            </div>
         </div>
     </div>
 

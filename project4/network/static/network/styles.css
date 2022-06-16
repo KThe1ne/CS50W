@@ -52,7 +52,7 @@ body{
     box-shadow: none;   
 }
 
-#allPosts{
+#allPosts, #followingPosts, .pagination-bar{
     grid-column: 2;
     padding: 5px;
 }
@@ -90,6 +90,15 @@ body{
     width: 60%;
     background-color: aquamarine;
     color: white;
+}
+
+.pagination-bar{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.pagination-bar button{
+    height: 30px;
 }
 
 .profile-container{

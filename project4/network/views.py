@@ -61,15 +61,16 @@ def flatten(arr):
 
 
 @login_required
-def followersPosts(request, name):
+def followingPosts(request):
 
-    profile = User.objects.get(username = name)
+    test = request.user
+    profile = User.objects.get(id = request.user.id)
     followers = profile.userFollows.all()
     followersPosts = [(Post.objects.filter(user = follower)) for follower in followers]
 
     followersPosts = flatten(followersPosts)
 
-    return JsonResponse([post.serialize() for post in followersPosts])
+    return JsonResponse({"followingPosts": [post.serialize() for post in followersPosts], "user": request.user.serialize()}, safe=False)
 
 
 def login_view(request):
