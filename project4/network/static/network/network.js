@@ -3,7 +3,10 @@ document.addEventListener("DOMContentLoaded",function () {
     //showPosts('allPosts');
     //showPosts('followingPosts');
 
-    document.querySelectorAll(".posts-page").forEach(element => {
+    document.querySelector("#allPosts-page").onclick = () => showPosts('allPosts');
+    document.querySelector("#followingPosts-page").onclick = () => showPosts('followingPosts');
+
+    /* document.querySelectorAll(".posts-page").forEach(element => {
         addEventListener("click", function() {
             if (element.innerHTML === "All Posts"){
                 console.log(element.innerHTML)
@@ -15,20 +18,30 @@ document.addEventListener("DOMContentLoaded",function () {
             }
             
         })
-    });
+    }); */
 
-    showPosts('allPosts');
+    // showPosts('allPosts');
 
 })
 
 function showPosts(postsType){
 
     const allPostsContainer = document.querySelector("#allPosts > *");
+
+    document.querySelector('#allPosts').innerHTML = '';
     
     if (postsType === 'allPosts'){
+
+        document.querySelector("#allPosts").style.display = 'block';
+        document.querySelector("#followingPosts").style.display = 'none';
+        document.querySelector(".profile-container").style.display = 'none';
+
         fetch('/all-posts')
         .then(response => response.json())
         .then(sentData => {
+
+
+
             const posts = sentData.allPosts;
 
             let pages = pagination(posts.length);
@@ -98,9 +111,7 @@ function showPosts(postsType){
             })
 
             console.log(allPostsContainer)
-            document.querySelector("#allPosts").style.display = 'block';
-            document.querySelector("#followingPosts").style.display = 'none';
-            document.querySelector(".profile-container").style.display = 'none';
+            
         })
 
     }
