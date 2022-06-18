@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded",function () {
         })
     }); */
 
-    // showPosts('allPosts');
+    showPosts('allPosts');
 
 })
 
@@ -61,6 +61,7 @@ function showPosts(postsType){
 
         })
         .then(sentData => {
+          
 
             const posts = sentData.allPosts;
 
@@ -110,7 +111,39 @@ function showPosts(postsType){
 
             })
 
-            console.log(allPostsContainer)
+            // Separate function
+
+            let pagesSelector = document.querySelectorAll('.page');
+
+            if (pagesSelector.length > 1){
+                console.log(pagesSelector.length)
+                const pages = [];
+                let pageNum = 1;
+
+                pagesSelector.forEach((page,i) => {
+                    pages.push(i+1);
+                })
+                
+                paginationBtnVisibility(pageNum, pages.length);
+
+                displayPostPage(pageNum);
+
+                document.querySelector(".nextBtn").onclick = () => {
+                    pageNum += 1;
+                    displayPostPage(pageNum);
+                    paginationBtnVisibility(pageNum, pages.length);
+                }
+
+                document.querySelector(".previousBtn").onclick = () => {
+                    pageNum -= 1;
+                    displayPostPage(pageNum);
+                    paginationBtnVisibility(pageNum, pages.length);
+                }
+
+            }
+            else{
+                document.querySelector('.pagination-bar').style.display ='none'
+            }
             
         })
 
@@ -158,7 +191,9 @@ function showPosts(postsType){
         
     }
 
-    
+
+   
+
 }
 
 
@@ -166,5 +201,34 @@ function pagination(length){
     
     let pages = Math.round(length % 10 > 0 ? (length/10)+1 : length/10);
     return(pages)
+
+}
+
+function postPage(){
+
+}
+
+function displayPostPage(page_num){
+
+    document.querySelector(`#page${page_num}`).style.display = 'block';
+    document.querySelectorAll(`.page:not(#page${page_num})`).forEach(page => {
+        page.style.display = 'none';
+    })
+}
+
+function paginationBtnVisibility(page_num, number_of_pages){
+
+    if (page_num > 1){
+        document.querySelector(".previousBtn").disabled = false;
+    }
+    else{
+        document.querySelector(".previousBtn").disabled = true;
+    }
+    if (page_num === number_of_pages){
+        document.querySelector(".nextBtn").disabled = true;
+    }
+    else{
+        document.querySelector(".nextBtn").disabled = false;
+    }
 
 }
