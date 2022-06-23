@@ -5,46 +5,60 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 from .models import User, Post
 
 class newPostForm(forms.Form):
     newPost = forms.CharField(label="", widget=forms.Textarea(attrs={'class': 'newPost', 'cols': 80, 'rows': 5}))
 
-
+@csrf_exempt
 def index(request):
 
     currUser = request.user
 
-    if request.method == 'POST':
-        
-        if ("newPost" in request.POST):
-
-            if (currUser.is_authenticated):
-
-                form = newPostForm(request.POST)
-
-                if (form.is_valid()):
-
-                    post = Post(
-                        user = currUser,
-                        content = form.cleaned_data["newPost"],
-                        )
-                    post.save()
+    if currUser.is_authenticated:
     
-    """ posts = list(Post.objects.all())
-    posts.reverse()
-    test = [post.serialize() for post in posts] """
-    
-    return render(request, "network/index.html",{
-        "postForm": newPostForm
-    })
+        return render(request, "network/index.html",{
+            "postForm": newPostForm
+        })
+
+    else: 
+
+        return render(request, "network/index.html")
+
+@csrf_exempt
+@login_required
+def savePost(request):
+
+    currUser = request.user
+
+    data = json.loads(request.body)
+     
+    postContent = data.get("content", "")
+    postType = data.get("type", "")
+    postId = data.get("postId", "")
+
+    if postType == "new":
+
+        post = Post(
+                    user = currUser,
+                    content = postContent,
+                )   
+
+    if postType == "edit":
+
+        post = Post.objects.get(id = postId)
+        post.content = postContent
+        post.save()
+
+    return JsonResponse({"message": "Posted successfully."}, status=201)
 
 def allPosts(request):
                           
     posts = list(Post.objects.all())
     posts.reverse()
-    test = [post.serialize() for post in posts]
     
     return JsonResponse({"allPosts":[post.serialize() for post in posts], "user": request.user.serialize()}, safe=False)
 
@@ -63,7 +77,6 @@ def flatten(arr):
 @login_required
 def followingPosts(request):
 
-    test = request.user
     profile = User.objects.get(id = request.user.id)
     followers = profile.userFollows.all()
     followersPosts = [(Post.objects.filter(user = follower)) for follower in followers]
@@ -72,6 +85,26 @@ def followingPosts(request):
 
     return JsonResponse({"followingPosts": [post.serialize() for post in followersPosts], "user": request.user.serialize()}, safe=False)
 
+@csrf_exempt
+@login_required
+def likePost(request, postId): 
+
+    currUser = request.user
+    post = Post.objects.get(id = postId)
+    
+    if (currUser in post.likes.all()):
+
+        post.likes.remove(currUser)
+
+    else:
+
+        post.likes.add(currUser)
+
+    test = post.serialize()
+
+
+    return JsonResponse(post.serialize(), safe=False)
+    
 
 def login_view(request):
     if request.method == "POST":

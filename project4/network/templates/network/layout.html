@@ -33,9 +33,7 @@
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <div>
-                            <!-- Set with JS -->
-                            <!-- <div class="profile-icon">B</div>  -->
-                            <a class="nav-link" href="{% url 'profilePage' user.username %}"><strong>{{ user.username }}</strong></a>
+                            <a class="nav-link" id="userprofile-page" href="#"><strong>{{ user.username }}</strong></a>
                         </div>
                     </li>
                 {% endif %}

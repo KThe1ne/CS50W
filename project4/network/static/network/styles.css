@@ -78,11 +78,11 @@ body{
     width: 30%;
 }
 
-#like-counter > *{
+#like-container > *{
     display: inline-block;
 }
 
-#like-counter > p{
+#like-container > p{
     margin-right: 20px;
 }
 
@@ -125,4 +125,9 @@ body{
 
 .profile-posts{
     grid-column: 2;
+}
+
+.edit-content{
+    display: block;
+    padding: 0px;
 }

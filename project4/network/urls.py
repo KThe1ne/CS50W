@@ -12,6 +12,8 @@ urlpatterns = [
     # API Paths
 
     path("all-posts", views.allPosts, name="allPosts"),
+    path("save-post", views.savePost, name="savePost"),
+    path("like-post/<int:postId>", views.likePost, name="likePost"),
     path("<str:name>/profile", views.profilePage, name="profilePage"),
     path("user/follow", views.followingPosts, name="followingPosts"),
 
