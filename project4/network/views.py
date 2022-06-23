@@ -55,6 +55,7 @@ def savePost(request):
 
     return JsonResponse({"message": "Posted successfully."}, status=201)
 
+
 def allPosts(request):
                           
     posts = list(Post.objects.all())

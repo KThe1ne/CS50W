@@ -41,13 +41,11 @@ function showPosts(postsType){
         .then(response => response.json())
         .then(sentData => {
 
-
-
             const posts = sentData.allPosts;
 
-            let pages = pagination(posts.length);
+            let pages = numberOfPages(posts.length);
 
-            for (let i=1; i<pages+1; i++){
+            for (let i=1; i<pages; i++){
 
                 const postPage = document.createElement('div');
 
@@ -63,60 +61,10 @@ function showPosts(postsType){
         })
         .then(sentData => {
           
-
             const posts = sentData.allPosts;
 
-            let pageNum = 0;
-
-            for (let i=0; i<posts.length; i++){
-
-                if (i % 10 === 0){
-                    pageNum += 1;
-                }
-
-                const postContainer = document.createElement('div');
-                postContainer.id= `post${i+1}`;
-                postContainer.className = "post";
-
-                document.querySelector(`#page${pageNum}`).append(postContainer);
-
-            }
-            
-            const postSelector = document.querySelectorAll(`.page > .post`);
-
-            postSelector.forEach((container,i) => {
-                container.innerHTML = `
-                    <div class="edit">
-                        <button id="editBtn">Edit</button>
-                    </div>
-                    <div class="post-details">
-                        <h5>${posts[i]["creator"][0]}</h5>
-                        <p>${posts[i]["timestamp"]}</p>
-                    </div>
-                    <p class="post-content">${posts[i]["content"]}</p>
-
-                    <div class="likes">
-                        <div id="like-container">
-                            <img src="#">
-                            <p id="like-counter">${posts[i]["likes"].length}</p>
-                            <button id="likeBtn">Like</button>
-                        </div>
-                    </div>
-                `;
-                container.dataset.postId = `${posts[i]["id"]}`;
-
-                container.querySelector("#likeBtn").onclick = () => {
-                    console.log("clicked");
-                    likePost(container, posts[i]["id"]);
-                    
-                    console.log(container.querySelector("#like-counter").innerHTML, `${posts[i]["likes"].length}`)
-                }
-
-                if (sentData.user.id !== posts[i]["creator"][1]){
-                    container.querySelector(".edit").style.display = 'none';
-                } 
-
-            })
+            fillPostData(posts, sentData.user);
+             
         })
         .then(() => {
             postPage();
@@ -166,42 +114,8 @@ function showPosts(postsType){
 
             const posts = sentData.followingPosts;
 
-            let pageNum = 0;
+            fillPostData(posts, sentData.user);
 
-            for (let i=0; i<posts.length; i++){
-
-                if (i % 10 === 0){
-                    pageNum += 1;
-                }
-
-                const postContainer = document.createElement('div');
-                postContainer.id= `post${i+1}`;
-                postContainer.className = "post";
-
-                document.querySelector(`#page${pageNum}`).append(postContainer);
-
-            }
-
-            const postSelector = document.querySelectorAll(`.page > .post`);
-
-            postSelector.forEach((container,i) => {
-                container.innerHTML = `
-                    <div class="post-details">
-                        <h5>${posts[i]["creator"][0]}</h5>
-                        <p>${posts[i]["timestamp"]}</p>
-                    </div>
-                    <p class="post-content">${posts[i]["content"]}</p>
-    
-                    <div class="likes">
-                        <div id="like-counter">
-                            <img src="#">
-                            <p>${posts[i]["likes"].length}</p>
-                            <button id="likeBtn">Like</button>
-                        </div>
-                    </div>
-                `;
-                container.dataset.postId = `${posts[i]["id"]}`;
-            })
         })
         .then(() => {
             postPage();
@@ -215,8 +129,62 @@ function showPosts(postsType){
     document.querySelector(".user-page").style.display = 'block';
 }
 
+function fillPostData(posts, user){
+    
+    let pageNum = 0;
 
-function pagination(length){
+    for (let i=0; i<posts.length; i++){
+
+        if (i % 10 === 0){
+            pageNum += 1;
+        }
+
+        const postContainer = document.createElement('div');
+        postContainer.id= `post${i+1}`;
+        postContainer.className = "post";
+
+        document.querySelector(`#page${pageNum}`).append(postContainer);
+
+    }
+    
+    const postSelector = document.querySelectorAll(`.page > .post`);
+
+    postSelector.forEach((container,i) => {
+        container.innerHTML = `
+            <div class="edit">
+                <button id="editBtn">Edit</button>
+            </div>
+            <div class="post-details">
+                <h5>${posts[i]["creator"][0]}</h5>
+                <p>${posts[i]["timestamp"]}</p>
+            </div>
+            <p class="post-content">${posts[i]["content"]}</p>
+
+            <div class="likes">
+                <div id="like-container">
+                    <div id="like-icon"></div>
+                    <p id="like-counter">${posts[i]["likes"].length}</p>
+                    <button id="likeBtn">Like</button>
+                </div>
+            </div>
+        `;
+        container.dataset.postId = `${posts[i]["id"]}`;
+
+        container.querySelector("#likeBtn").onclick = () => {
+            console.log("clicked");
+            likePost(container, posts[i]["id"]);
+            
+            console.log(container.querySelector("#like-counter").innerHTML, `${posts[i]["likes"].length}`)
+        }
+
+        if (user.id !== posts[i]["creator"][1]){
+            container.querySelector(".edit").style.display = 'none';
+        } 
+
+    })
+}
+
+function numberOfPages(length){
     
     let pages = Math.round(length % 10 > 0 ? (length/10)+1 : length/10);
     return(pages)

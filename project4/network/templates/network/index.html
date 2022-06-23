@@ -1,7 +1,6 @@
 {% extends "network/layout.html" %}
 {% load static %}
 
-{% block pageTitle%}All Posts{% endblock %}
 
 {% block body %}
     <script src="{% static 'network/network.js' %}"></script>
@@ -20,21 +19,18 @@
                 <!-- Add Posts here -->
             </div>
             
+            <div id="followingPosts" class="followers posts">
+            </div>
+
             <div class="pagination-bar">
                 <button class="previousBtn">Previous</button>
                 <button class="nextBtn">Next</button>
             </div>
         </div>
-        <div id="followingPosts" class="followers posts">
-            
-        </div>
-        <div class="pagination-bar">
-            <button class="previousBtn">Previous</button>
-            <button class="nextBtn">Next</button>
-        </div>
     </div>
 
     <div class="profile-container">
+
         <button class="followBtn">Follow</button>
         <h2 class="profile-username">{{profile.username}}</h2>
         <div class="profile-details">

@@ -10,7 +10,11 @@
 body{
     font-family: 'Roboto Slab', serif;
     box-sizing: border-box;
-    background-color: #BFBFBF50;
+    background-color: rgba(0,0,0,.1);
+}
+
+.user-page{
+    margin-top: 20px;
 }
 
 .allPostsPage{
@@ -58,14 +62,18 @@ body{
 }
 
 .post{
-    border-bottom: 1px solid grey;
-    padding: 5px;
+    padding: 10px;
+    padding-bottom: 20px;
     margin-bottom: 5px;
     min-height: 150px;
     max-height: max-content;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    border-radius: 20px;
+    border: 2px black solid;
+    box-shadow: 0px 0px 20px 5px aliceblue;
+    
 }
 
 .post p{
@@ -78,12 +86,32 @@ body{
     width: 30%;
 }
 
+.edit{
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 20px;
+}
+
+#like-container{
+    display: flex;
+    align-content: center;
+    column-gap: 10px;
+    height: 30px;
+}
+
 #like-container > *{
     display: inline-block;
 }
 
 #like-container > p{
-    margin-right: 20px;
+    line-height: 30px;
+}
+
+#like-icon{
+    background-image: url("/static/like-icon.svg");
+    width: 10%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 #likeBtn{
@@ -130,4 +158,9 @@ body{
 .edit-content{
     display: block;
     padding: 0px;
+}
+
+#editBtn{
+    margin-right: 0px;
+    margin-left: auto;
 }
