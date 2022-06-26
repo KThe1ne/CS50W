@@ -13,8 +13,10 @@ urlpatterns = [
 
     path("all-posts", views.allPosts, name="allPosts"),
     path("save-post", views.savePost, name="savePost"),
+    path("toggle-follow", views.toggleFollow, name="toggleFollow"),
+    path("posts/<str:postType>", views.displayPosts, name="displayPosts"),
     path("like-post/<int:postId>", views.likePost, name="likePost"),
-    path("<str:name>/profile", views.profilePage, name="profilePage"),
+    path("profile/<str:name>", views.profilePage, name="profilePage"),
     path("user/follow", views.followingPosts, name="followingPosts"),
 
 

@@ -5,9 +5,21 @@
 
 {% block body %}
     <script src="{% static 'network/network.js' %}"></script>
+
     
     <div class="user-page">
         <div class="allPostsPage">
+            <div class="profile-container">
+                {% if user.is_authenticated %}
+                    <button class="followBtn">Follow</button>
+                {% endif %}
+                <h2 class="profile-username"></h2>
+                <div class="profile-details">
+                    <p id="profile-followers">Followers: {{profile.followers.all|length}}</p>
+                    <a id="profile-following" href="">Following: {{profile.userFollows.all|length}}</a>
+                </div>
+                
+            </div>
             <div id="newPost-container">
                 <h3>Add New Post</h3>
                 <form action="{% url 'index' %}" method="post">
@@ -28,19 +40,7 @@
         <div id="followingPosts" class="followers posts">
             
         </div>
-        <div class="pagination-bar">
-            <button class="previousBtn">Previous</button>
-            <button class="nextBtn">Next</button>
-        </div>
     </div>
 
-    <div class="profile-container">
-        <button class="followBtn">Follow</button>
-        <h2 class="profile-username">{{profile.username}}</h2>
-        <div class="profile-details">
-            <p>Followers: <strong>{{profile.followers.all|length}}</strong></p>
-            <a href="">Following: <strong>{{profile.userFollows.all|length}}</strong></a>
-        </div>
-        
-    </div>
+    
 {% endblock %}

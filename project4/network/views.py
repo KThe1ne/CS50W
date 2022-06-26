@@ -55,6 +55,41 @@ def savePost(request):
 
     return JsonResponse({"message": "Posted successfully."}, status=201)
 
+def displayPosts(request, postType):
+
+    if postType == "all":
+
+        posts = list(Post.objects.all())
+
+    elif postType == "followers":
+
+        profile = User.objects.get(id = request.user.id)
+        followers = profile.userFollows.all()
+        followersPosts = [(Post.objects.filter(user = follower)) for follower in followers]
+
+        posts = flatten(followersPosts)
+    
+    else:
+
+        allUsernames = [user.username for user in User.objects.all()]
+        
+        if (postType in allUsernames):
+
+            profile = User.objects.get(username = postType)
+            posts = Post.objects.filter(user = profile)
+        
+        else:
+
+            return JsonResponse({
+            "error": postType + " does not exist."
+            }, status=400)
+
+    posts.reverse()
+
+    return JsonResponse({"posts":[post.serialize() for post in posts], "user": request.user.serialize()}, safe=False)
+    
+
+
 def allPosts(request):
                           
     posts = list(Post.objects.all())
@@ -62,16 +97,44 @@ def allPosts(request):
     
     return JsonResponse({"allPosts":[post.serialize() for post in posts], "user": request.user.serialize()}, safe=False)
 
-
+@csrf_exempt
 def profilePage(request, name):
 
     profile = User.objects.get(username = name)
+    currUser = User.objects.get(id = request.user.id)
 
-    return JsonResponse(profile.serialize())
+    return JsonResponse({"profile": profile.serialize(), "currUser": currUser.serialize()}, safe=False)
 
 def flatten(arr):
     
     return [ele for arr1 in arr for ele in arr1]
+
+@csrf_exempt
+@login_required
+def toggleFollow(request):
+
+    currUser = User.objects.get(id = request.user.id)
+
+    data = json.loads(request.body)
+
+    profile = data.get("profile","")
+    profile = User.objects.get(id = profile["id"])
+
+    test = profile.id
+
+    user_follows_profile = profile.id in [user.id for user in currUser.userFollows.all()]
+
+
+    if user_follows_profile:
+
+        currUser.userFollows.remove(profile)
+
+    else:
+
+        currUser.userFollows.add(profile)
+
+
+    return JsonResponse(profile.serialize())
 
 
 @login_required
@@ -99,9 +162,6 @@ def likePost(request, postId):
     else:
 
         post.likes.add(currUser)
-
-    test = post.serialize()
-
 
     return JsonResponse(post.serialize(), safe=False)
     

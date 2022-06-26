@@ -33,7 +33,7 @@
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <div>
-                            <a class="nav-link" id="userprofile-page" href="#"><strong>{{ user.username }}</strong></a>
+                            <a class="nav-link" id="userprofile-link" href="#">{{ user.username }}</a>
                         </div>
                     </li>
                 {% endif %}
@@ -60,7 +60,6 @@
           </nav>
         
         <div class="body">
-            // Retrieve each page from the server and use JS to load each post page 
             {% block pageTitle %}{% endblock %}
             {% block body %}
             {% endblock %}

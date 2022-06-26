@@ -3,15 +3,16 @@ from django.db import models
 
 
 class User(AbstractUser):
-    # userFollowers = models.ManyToManyField('self', blank=True, related_name="follows", symmetrical=False)
-    userFollows = models.ManyToManyField('self', blank=True, related_name="followers",symmetrical=False)
+    userFollowers = models.ManyToManyField('self', blank=True, related_name="follows",symmetrical=False)
+    userFollows = models.ManyToManyField('self', blank=True, related_name="followers", symmetrical=False)
 
     def serialize(self):
         return {
             "id": self.id,
             "username": self.username,
             "email": self.email,
-            "userFollows": [user.id for user in self.userFollows.all()]
+            "userFollows": [user.id for user in self.userFollows.all()],
+            "userFollowers": [user.id for user in self.userFollowers.all()]
         }
 
 class Post(models.Model):

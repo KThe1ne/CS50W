@@ -12,21 +12,71 @@ document.addEventListener("DOMContentLoaded",function () {
     
     }
 
-    document.querySelector("#allPosts-page").onclick = () => showPosts('allPosts');
-    document.querySelector("#followingPosts-page").onclick = () => showPosts('followingPosts');
-    document.querySelector("#userprofile-page").onclick = () => showProfilePage();
+    document.querySelector("#allPosts-page").onclick = () => showPosts('all');
+    document.querySelector("#followingPosts-page").onclick = () => showPosts('followers');
+    
+    showPosts('all');
 
-    showPosts('allPosts');
-
+    /* */
 })
 
-function showProfilePage(){
 
-    document.querySelector(".user-page").style.display = 'none';
+function showProfilePage(username){
+
     document.querySelector(".profile-container").style.display = 'block';
+
+    fetch("profile/" + username, {
+        method: 'PUT',
+        /* body: JSON.stringify({
+
+        }) */
+    })
+    .then(response => response.json())
+    .then(result => {
+
+        document.querySelector(".profile-username").innerHTML = result.profile.username;
+        document.querySelector("#profile-following").innerHTML = "Following: " + result.profile.userFollows.length;
+        document.querySelector("#profile-followers").innerHTML = "Followers: " + result.profile.userFollowers.length;
+
+
+        if (result.currUser.userFollows.includes(result.profile.id)){
+            document.querySelector(".followBtn").innerHTML = "Unfollow"
+        }
+        else{
+            document.querySelector(".followBtn").innerHTML = "Follow"
+        }
+
+        return result
+
+    })
+    .then((result) => {
+
+        profile = result.profile;
+        currUser = result.profile;
+
+        document.querySelector(".followBtn").onclick = () => {
+            fetch("/toggle-follow", {
+                method: 'PUT',
+                body: JSON.stringify({
+                    profile: profile
+                })
+            })
+            .then(response => response.json())
+            .then(profile => {
+                document.querySelector(".profile-username").innerHTML = profile.username;
+                document.querySelector("#profile-following").innerHTML = "Following: " + profile.userFollows.length;
+                document.querySelector("#profile-followers").innerHTML = "Followers: " + profile.userFollowers.length;
+            })
+        }
+    })
+
+    showPosts(username);
 
 }
 
+function userFollowsProfile(){
+    
+}
 
 function showPosts(postsType){
 
@@ -34,192 +84,76 @@ function showPosts(postsType){
 
     document.querySelector('#allPosts').innerHTML = '';
     document.querySelector('#followingPosts').innerHTML = '';
-    
-    if (postsType === 'allPosts'){
 
-        fetch('/all-posts')
-        .then(response => response.json())
-        .then(sentData => {
+    fetch('/posts/' + postsType)
+    .then(response => response.json())
+    .then(sentData => {
 
+        const posts = sentData.posts;
 
+        let pages = numberOfPages(posts.length);
 
-            const posts = sentData.allPosts;
+        paginate(pages)
 
-            let pages = pagination(posts.length);
+        return sentData;
 
-            for (let i=1; i<pages+1; i++){
-
-                const postPage = document.createElement('div');
-
-                postPage.id = "page" + i;
-                postPage.className = "page"
-
-                document.querySelector("#allPosts").append(postPage); 
-
-            }
-
-            return sentData;
-
-        })
-        .then(sentData => {
-          
-
-            const posts = sentData.allPosts;
-
-            let pageNum = 0;
-
-            for (let i=0; i<posts.length; i++){
-
-                if (i % 10 === 0){
-                    pageNum += 1;
-                }
-
-                const postContainer = document.createElement('div');
-                postContainer.id= `post${i+1}`;
-                postContainer.className = "post";
-
-                document.querySelector(`#page${pageNum}`).append(postContainer);
-
-            }
-            
-            const postSelector = document.querySelectorAll(`.page > .post`);
-
-            postSelector.forEach((container,i) => {
-                container.innerHTML = `
-                    <div class="edit">
-                        <button id="editBtn">Edit</button>
-                    </div>
-                    <div class="post-details">
-                        <h5>${posts[i]["creator"][0]}</h5>
-                        <p>${posts[i]["timestamp"]}</p>
-                    </div>
-                    <p class="post-content">${posts[i]["content"]}</p>
-
-                    <div class="likes">
-                        <div id="like-container">
-                            <img src="#">
-                            <p id="like-counter">${posts[i]["likes"].length}</p>
-                            <button id="likeBtn">Like</button>
-                        </div>
-                    </div>
-                `;
-                container.dataset.postId = `${posts[i]["id"]}`;
-
-                container.querySelector("#likeBtn").onclick = () => {
-                    console.log("clicked");
-                    likePost(container, posts[i]["id"]);
-                    
-                    console.log(container.querySelector("#like-counter").innerHTML, `${posts[i]["likes"].length}`)
-                }
-
-                if (sentData.user.id !== posts[i]["creator"][1]){
-                    container.querySelector(".edit").style.display = 'none';
-                } 
-
-            })
-        })
-        .then(() => {
-            postPage();
-            document.querySelector("#allPosts").style.display = 'block';
-            document.querySelector("#followingPosts").style.display = 'none';
-            document.querySelector(".profile-container").style.display = 'none';
-
-            document.querySelectorAll("#editBtn").forEach(editBtn => {
-                editBtn.onclick = () => {
-                    postContainer =  editBtn.parentElement.parentElement;
-                    editPost(postContainer);
-                }
-            })
-
-
-        })
-
-
-
-    }
-
-    if (postsType === 'followingPosts'){
+    })
+    .then(sentData => {
         
-        fetch("/user/follow")   
-        .then(response => response.json()) 
-        .then(sentData => {
+        const posts = sentData.posts;
 
-            const posts = sentData.followingPosts;
-
-            let pages = pagination(posts.length);
-
-            for (let i=1; i<pages+1; i++){
-
-                const postPage = document.createElement('div');
-
-                postPage.id = "page" + i;
-                postPage.className = "page"
-
-                document.querySelector("#followingPosts").append(postPage); 
-
-            }
-
-            return sentData;
-        
-        })
-        .then(sentData => {
-
-            const posts = sentData.followingPosts;
-
-            let pageNum = 0;
-
-            for (let i=0; i<posts.length; i++){
-
-                if (i % 10 === 0){
-                    pageNum += 1;
-                }
-
-                const postContainer = document.createElement('div');
-                postContainer.id= `post${i+1}`;
-                postContainer.className = "post";
-
-                document.querySelector(`#page${pageNum}`).append(postContainer);
-
-            }
-
-            const postSelector = document.querySelectorAll(`.page > .post`);
-
-            postSelector.forEach((container,i) => {
-                container.innerHTML = `
-                    <div class="post-details">
-                        <h5>${posts[i]["creator"][0]}</h5>
-                        <p>${posts[i]["timestamp"]}</p>
-                    </div>
-                    <p class="post-content">${posts[i]["content"]}</p>
+        fillPostContent(posts, sentData.user);
     
-                    <div class="likes">
-                        <div id="like-counter">
-                            <img src="#">
-                            <p>${posts[i]["likes"].length}</p>
-                            <button id="likeBtn">Like</button>
-                        </div>
-                    </div>
-                `;
-                container.dataset.postId = `${posts[i]["id"]}`;
-            })
-        })
-        .then(() => {
-            postPage();
-            document.querySelector("#allPosts").style.display = 'none';
-            document.querySelector("#followingPosts").style.display = 'block';
+    })
+    .then(() => {
+        postPage();
+        document.querySelector("#allPosts").style.display = 'block';
+
+        if (postsType === "all" || postsType === "followers") {
             document.querySelector(".profile-container").style.display = 'none';
+        }
+
+        
+
+        document.querySelectorAll("#editBtn").forEach(editBtn => {
+            editBtn.onclick = () => {
+                postContainer =  editBtn.parentElement.parentElement;
+                editPost(postContainer);
+            }
         })
 
-    }
+        document.querySelector(".user-page").style.display = 'block';
+    
+        document.querySelectorAll("#userprofile-link").forEach(userProfileLink => {
+            userProfileLink.onclick = () => {
+                username = userProfileLink.innerHTML;
+                showProfilePage(username)
+            }
+        })
 
-    document.querySelector(".user-page").style.display = 'block';
+    })
+
 }
 
 
-function pagination(length){
+function numberOfPages(number_of_posts){
     
-    let pages = Math.round(length % 10 > 0 ? (length/10)+1 : length/10);
-    return(pages)
+    return(Math.round(number_of_posts % 10 > 0 ? (number_of_posts/10)+1 : number_of_posts/10))
+
+}
+
+function paginate(number_of_pages){
+
+    for (let i=1; i<number_of_pages+1; i++){
+
+        const postPage = document.createElement('div');
+
+        postPage.id = "page" + i;
+        postPage.className = "page"
+
+        document.querySelector("#allPosts").append(postPage); 
+
+    }
 
 }
 
@@ -227,35 +161,43 @@ function postPage(){
 
     let pagesSelector = document.querySelectorAll('.page');
 
-            if (pagesSelector.length > 1){
-                console.log(pagesSelector.length)
-                const pages = [];
-                let pageNum = 1;
+    if (pagesSelector.length > 1){
 
-                pagesSelector.forEach((page,i) => {
-                    pages.push(i+1);
-                })
-                
-                paginationBtnVisibility(pageNum, pages.length);
+        const pages = [];
+        let pageNum = 1;
 
-                displayPostPage(pageNum);
+        pagesSelector.forEach((page,i) => {
 
-                document.querySelector(".nextBtn").onclick = () => {
-                    pageNum += 1;
-                    displayPostPage(pageNum);
-                    paginationBtnVisibility(pageNum, pages.length);
-                }
+            pages.push(i+1);
 
-                document.querySelector(".previousBtn").onclick = () => {
-                    pageNum -= 1;
-                    displayPostPage(pageNum);
-                    paginationBtnVisibility(pageNum, pages.length);
-                }
+        })
+        
+        paginationBtnVisibility(pageNum, pages.length);
 
-            }
-            else{
-                document.querySelector('.pagination-bar').style.display ='none'
-            }
+        displayPostPage(pageNum);
+
+        document.querySelector(".nextBtn").onclick = () => {
+
+            pageNum += 1;
+            displayPostPage(pageNum);
+            paginationBtnVisibility(pageNum, pages.length);
+
+        }
+
+        document.querySelector(".previousBtn").onclick = () => {
+
+            pageNum -= 1;
+            displayPostPage(pageNum);
+            paginationBtnVisibility(pageNum, pages.length);
+
+        }
+
+    }
+    else{
+
+        document.querySelector('.pagination-bar').style.display ='none';
+
+    }
 
 }
 
@@ -265,6 +207,7 @@ function displayPostPage(page_num){
     document.querySelectorAll(`.page:not(#page${page_num})`).forEach(page => {
         page.style.display = 'none';
     })
+
 }
 
 function paginationBtnVisibility(page_num, number_of_pages){
@@ -284,9 +227,67 @@ function paginationBtnVisibility(page_num, number_of_pages){
 
 }
 
- 
+function fillPostContent(posts, user){
+
+    let pageNum = 0;
+
+    for (let i=0; i<posts.length; i++){
+
+        if (i % 10 === 0){
+            pageNum += 1;
+        }
+
+        const postContainer = document.createElement('div');
+        postContainer.id= `post${i+1}`;
+        postContainer.className = "post";
+
+        document.querySelector(`#page${pageNum}`).append(postContainer);
+
+    }
+    
+    const postSelector = document.querySelectorAll(`.page > .post`);
+
+    postSelector.forEach((container,i) => {
+
+        container.innerHTML = `
+            <div class="edit">
+                <button id="editBtn">Edit</button>
+            </div>
+            <div class="post-details">
+                <a href="#" id="userprofile-link">${posts[i]["creator"][0]}</a>
+                <p>${posts[i]["timestamp"]}</p>
+            </div>
+            <p class="post-content">${posts[i]["content"]}</p>
+
+            <div class="likes">
+                <div id="like-container">
+                    <img src="#">
+                    <p id="like-counter">${posts[i]["likes"].length}</p>
+                    <button id="likeBtn">Like</button>
+                </div>
+            </div>
+        `;
+
+        container.dataset.postId = `${posts[i]["id"]}`;
+
+        container.querySelector("#likeBtn").onclick = () => {
+            
+            likePost(container, posts[i]["id"]);
+
+        }
+
+        if (user.id !== posts[i]["creator"][1]){
+
+            container.querySelector(".edit").style.display = 'none';
+
+        } 
+
+    })
+
+}
 
 function editPost(post){
+
     const postContent = post.querySelector('.post-content');
     
     const postText = postContent.innerHTML;
@@ -312,11 +313,10 @@ function editPost(post){
         })
     }
 
-    console.log(document.querySelector(".saveEditBtn"))
-
 }
 
 function likePost(container, postId){
+
     fetch("/like-post/"+postId,{
         method: 'PUT',
         body: JSON.stringify({
@@ -329,3 +329,4 @@ function likePost(container, postId){
     })
 
 }
+
