@@ -6,6 +6,8 @@
     <title>Login</title>
 </head>
 <body>
-    
+    <form action="{% url 'index' %}" method="post">
+        {{ loginForm }}
+    </form>
 </body>
 </html>

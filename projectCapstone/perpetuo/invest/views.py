@@ -17,7 +17,7 @@ class loginForm(forms.Form):
 
 def index(request):
 
-    return JsonResponse("")
+    return JsonResponse({})
 
 def register(request):
 
@@ -25,7 +25,9 @@ def register(request):
 
 def login_view(request):
 
-    return render(request, "invest/login.html")
+    return render(request, "invest/login.html", {
+        "loginForm": loginForm
+    })
 
 def logout_view(request):
     logout(request)
