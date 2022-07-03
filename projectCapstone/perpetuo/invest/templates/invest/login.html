@@ -1,13 +1,25 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="{% static 'login/styles.css' %}">
 </head>
 <body>
-    <form action="{% url 'index' %}" method="post">
-        {{ loginForm }}
-    </form>
+    <div class="container">
+        {% if message %}
+            <h3>{{ message }}</h3>
+        {% endif %}
+        <form action="{% url 'index' %}" method="post">
+            {% csrf_token %}
+            <div class="loginForm-container">
+                {{ loginForm }}
+                <button type="submit">Log In</button>
+            </div>
+        </form>
+    </div>
+    
 </body>
 </html>

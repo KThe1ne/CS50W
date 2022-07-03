@@ -11,8 +11,8 @@ import json
 
 class loginForm(forms.Form):
 
-    username = forms.CharField(label="Username: ", max_length=20)
-    password = forms.CharField(label="Password: ", widget=forms.PasswordInput)
+    username = forms.CharField(label="Username", max_length=20)
+    password = forms.CharField(label="Password", widget=forms.PasswordInput)
 
 
 def index(request):
@@ -24,6 +24,21 @@ def register(request):
     return render(request, "invest/register.html")
 
 def login_view(request):
+
+    if request.method == "POST":
+
+        username = request.POST["username"]
+        password = request.POST["password"]
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return render(request, "network/login.html", {
+                "message": "Invalid username and/or password."
+            })
 
     return render(request, "invest/login.html", {
         "loginForm": loginForm
