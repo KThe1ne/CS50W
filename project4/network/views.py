@@ -120,21 +120,21 @@ def toggleFollow(request):
     profile = data.get("profile","")
     profile = User.objects.get(id = profile["id"])
 
-    test = profile.id
-
     user_follows_profile = profile.id in [user.id for user in currUser.userFollows.all()]
 
 
     if user_follows_profile:
 
         currUser.userFollows.remove(profile)
+        profile.userFollowers.remove(currUser)
 
     else:
 
         currUser.userFollows.add(profile)
+        profile.userFollowers.add(currUser)
 
 
-    return JsonResponse(profile.serialize())
+    return JsonResponse({"profile":profile.serialize(), "currUser": request.user.serialize()}, safe=False)
 
 
 @login_required

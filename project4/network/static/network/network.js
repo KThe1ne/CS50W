@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded",function () {
     
     showPosts('all');
 
-    /* */
 })
 
 
@@ -27,24 +26,22 @@ function showProfilePage(username){
 
     fetch("profile/" + username, {
         method: 'PUT',
-        /* body: JSON.stringify({
-
-        }) */
     })
     .then(response => response.json())
     .then(result => {
+
+        document.querySelector(".followBtn").style.display = "block";
+
+        if (result.currUser.id == result.profile.id){
+            console.log(result.currUser.username, result.profile.username)
+            document.querySelector(".followBtn").style.display = "none";
+        }
 
         document.querySelector(".profile-username").innerHTML = result.profile.username;
         document.querySelector("#profile-following").innerHTML = "Following: " + result.profile.userFollows.length;
         document.querySelector("#profile-followers").innerHTML = "Followers: " + result.profile.userFollowers.length;
 
-
-        if (result.currUser.userFollows.includes(result.profile.id)){
-            document.querySelector(".followBtn").innerHTML = "Unfollow"
-        }
-        else{
-            document.querySelector(".followBtn").innerHTML = "Follow"
-        }
+        userFollowsProfile(result.profile, result.currUser)
 
         return result
 
@@ -52,7 +49,7 @@ function showProfilePage(username){
     .then((result) => {
 
         profile = result.profile;
-        currUser = result.profile;
+        currUser = result.currUser;
 
         document.querySelector(".followBtn").onclick = () => {
             fetch("/toggle-follow", {
@@ -62,8 +59,13 @@ function showProfilePage(username){
                 })
             })
             .then(response => response.json())
-            .then(profile => {
-                document.querySelector(".profile-username").innerHTML = profile.username;
+            .then(result => {
+
+                profile = result.profile;
+                currUser = result.currUser;
+
+                userFollowsProfile(profile, currUser);
+
                 document.querySelector("#profile-following").innerHTML = "Following: " + profile.userFollows.length;
                 document.querySelector("#profile-followers").innerHTML = "Followers: " + profile.userFollowers.length;
             })
@@ -74,13 +76,18 @@ function showProfilePage(username){
 
 }
 
-function userFollowsProfile(){
-    
+function userFollowsProfile(profile, currUser){
+   
+    if (currUser.userFollows.includes(profile.id)){
+        document.querySelector(".followBtn").innerHTML = "Unfollow";
+    }
+    else{
+        document.querySelector(".followBtn").innerHTML = "Follow";
+    }
+
 }
 
 function showPosts(postsType){
-
-    const allPostsContainer = document.querySelector("#allPosts > *");
 
     document.querySelector('#allPosts').innerHTML = '';
     document.querySelector('#followingPosts').innerHTML = '';
@@ -113,8 +120,6 @@ function showPosts(postsType){
             document.querySelector(".profile-container").style.display = 'none';
         }
 
-        
-
         document.querySelectorAll("#editBtn").forEach(editBtn => {
             editBtn.onclick = () => {
                 postContainer =  editBtn.parentElement.parentElement;
@@ -127,6 +132,7 @@ function showPosts(postsType){
         document.querySelectorAll("#userprofile-link").forEach(userProfileLink => {
             userProfileLink.onclick = () => {
                 username = userProfileLink.innerHTML;
+                console.log("TEST");
                 showProfilePage(username)
             }
         })
@@ -134,7 +140,6 @@ function showPosts(postsType){
     })
 
 }
-
 
 function numberOfPages(number_of_posts){
     
@@ -218,6 +223,7 @@ function paginationBtnVisibility(page_num, number_of_pages){
     else{
         document.querySelector(".previousBtn").disabled = true;
     }
+    
     if (page_num === number_of_pages){
         document.querySelector(".nextBtn").disabled = true;
     }

@@ -109,10 +109,10 @@ body{
 }
 
 .followBtn{
-    grid-column: 3;
+    grid-column: 1;
     width: 30%;
-    margin-right: 5px;
-    margin-left: auto;
+    /* margin-right: 5px;
+    margin-left: auto; */
 }
 
 .profile-username{
