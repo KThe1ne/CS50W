@@ -7,6 +7,13 @@ import Header from './Header.js';
 import LineGraph from "./LineGraph";
 
 function App() {
+    let test = {};
+
+    fetch("/apiTest", )
+    .then(response => {test = response.json()})
+
+    console.log(test)
+
     return (
        <div>
             <Header/>
