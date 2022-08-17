@@ -4,5 +4,5 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('apiTest', views.apiTest, name='apiTest')
+    path('getPriceHistory/<str:trading_pair>/<str:time_period>', views.getPriceHistory, name='getPriceHistory')
 ]

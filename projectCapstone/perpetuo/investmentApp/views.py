@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 from django.views.decorators.csrf import csrf_exempt
-import json, time, requests, random
+import json, time, requests, random, datetime
 
 from . import util
 
@@ -34,28 +34,46 @@ headers = {
 print(config['API_NAME'])
 
 
-def apiTest(request):
+def getPriceHistory(request, trading_pair, time_period):
+
+    month_in_sec = 30*24*60*60
+    curr_time = int(now/1000)
+    last_month = curr_time - month_in_sec
+
+    endpoint = "/api/v1/market/candles?type={}&symbol={}&startAt={}&endAt={}".format(time_period, trading_pair, last_month, curr_time)
+
+    print(endpoint)
+
+    headers["KC-API-SIGN"] = util.createSignature(now, 'GET', endpoint, config)
 
     if request.method == "GET":
 
-        key = config['API_KEY']
-        secret = config['API_SECRET']
+        response = requests.request('GET', url+endpoint, headers=headers)
 
-        url = "https://openapi-sandbox.kucoin.com"
-        
-        headers = {
-            "KC-API-SIGN": util.createSignature(now, 'GET', endpoint, config),
-            "KC-API-TIMESTAMP": str(now),
-            "KC-API-KEY": key,
-            "KC-API-PASSPHRASE": util.createPassphrase(config),
-            "KC-API-KEY-VERSION": "2",
-            "Content-Type": "application/json",
-        }
-
-        response = requests.request('GET', url+"/api/v1/market/allTickers", headers=headers)
-
+    print(response.json())
+    
     return JsonResponse(response.json())
 
+def getPriceHistoryTest():
+
+    month_in_sec = 30*24*60*60
+    curr_time = int(now/1000)
+    last_month = curr_time - month_in_sec
+
+    endpoint = "/api/v1/market/candles?type=4hour&symbol=BTC-USDT&startAt={}&endAt={}".format(last_month,curr_time)
+
+    print(endpoint)
+
+    headers["KC-API-SIGN"] = util.createSignature(now, 'GET', endpoint, config)
+
+    response = requests.request('GET', url+endpoint, headers=headers)
+
+    print("test")
+
+    print(response.json())
+
+
+getPriceHistoryTest()
     
 
 def test():
@@ -85,4 +103,3 @@ def index(request):
 
     return render(request, "html/index.html")
 
-test()

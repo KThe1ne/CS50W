@@ -4,16 +4,9 @@ import {createRoot} from 'react-dom/client';
 import '../../dist/output.css';
 
 import Header from './Header.js';
-import LineGraph from "./LineGraph";
+import LineGraph from "./LineGraph.js";
 
 function App() {
-    let test = {};
-
-    fetch("/apiTest", )
-    .then(response => {test = response.json()})
-
-    console.log(test)
-
     return (
        <div>
             <Header/>
