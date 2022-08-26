@@ -1,47 +1,65 @@
-import React from 'react';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, registerables } from 'chart.js'
+import React from "react";
+import { Line } from "react-chartjs-2";
+import { Chart as ChartJS, registerables } from "chart.js";
+import "chartjs-adapter-moment";
 ChartJS.register(...registerables);
 
 function LineGraph() {
+  let period = "4hour";
+  let symbol = "BTC-USDT";
 
-  let period = "4hour"
-  let symbol = "BTC-USDT"
-
-  let data = []
+  let data = [];
 
   fetch(`getPriceHistory/${symbol}/${period}`)
-  .then(response => response.json())
-  .then(result => {
+    .then((response) => response.json())
+    .then((result) => {
+      // console.log(result)
 
-      console.log(result)
-   
-      result.data.forEach(element => {
+      result.data.forEach((element) => {
+        let date = new Date(element[0] * 1000);
         data.push({
-          x: element[0],
-          y: element[3]
-        })
+          x: date,
+          y: element[3],
+        });
       });
 
-      console.log(data)
-    })
-  
-    data.reverse()
-  
+      console.log(data);
+    });
+
+  // data.reverse();
+
   return (
     <div>
-      Line Graph!!
-      <Line 
+      Line Graph!!!
+      <Line
         data={{
           datasets: [
             {
               type: "line",
-              data: data
-            }
-          ]
-        }}/>
+              data: data,
+            },
+          ],
+        }}
+        options={{
+          scales: {
+            x: {
+              type: "time",
+              time: {
+                // format: "MM/DD/YY",
+                tooltipFormat: "ll",
+                unit: "day",
+              },
+              adapters: {
+                /* date: {
+                  locale: enUS,
+                }, */
+              },
+            },
+          },
+        }}
+      />
     </div>
-  )
+  );
 }
 
-export default LineGraph
+export default LineGraph;

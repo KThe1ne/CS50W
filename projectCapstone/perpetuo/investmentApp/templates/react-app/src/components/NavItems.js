@@ -1,11 +1,19 @@
-import React from 'react'
+import React from "react";
+import { Link } from "react-router-dom";
+
+const PAGEURLS = {
+  Home: "/",
+  Portfolio: "/portfolio",
+  Profile: "/profile",
+  "Sign Out": "/signout",
+};
 
 function NavItem(props) {
   return (
-    <a className='hover:text-secondary-color' href="#">
-        <div className='py-2 hover:pt-0'>{props.title}</div>
-    </a>
-  )
+    <Link to={PAGEURLS[props.title]} className="hover:text-green-500">
+      <div className="py-2 hover:pt-0">{props.title}</div>
+    </Link>
+  );
 }
 
-export default NavItem
+export default NavItem;
