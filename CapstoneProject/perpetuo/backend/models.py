@@ -21,5 +21,15 @@ class Transaction(models.Model):
 
 class CurrencySplitPref(models.Model):
     userId = models.ManyToManyField("User", blank=False, related_name="userPortfolioPref")
-    currency = models.CharField(max_length=6, blank=False)
+    currency = models.CharField(max_length=10, blank=False)
     percentage = models.PositiveIntegerField(blank=False, validators=[MinValueValidator(1), MaxValueValidator(100)]) 
+
+    def serialize(self):
+        return {
+            "currency": self.currency,
+            "percentage": self.percentage,
+        }
+
+
+
+# I might not need the Transaction model. I can just retrieve data from the kucoin api about balances and stuff in the App.js file and send them to different children

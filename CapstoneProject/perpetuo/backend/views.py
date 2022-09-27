@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core import serializers
 
 # Create your views here.
 from django.contrib.auth import authenticate, login, logout
@@ -40,9 +41,6 @@ headers = {
     "KC-API-KEY-VERSION": "2",
     "Content-Type": "application/json",
 }
-
-
-print(config['API_NAME'])
 
 
 def getPriceHistory(trading_pair, period, extent):
@@ -206,7 +204,7 @@ def makeOrder(request):
     data = {
         "clientOid": "PPTOrder",
         "side": "buy",
-        "symbol": "ETH-USDT",
+        "symbol": "KCS-USDT",
         "type": "market",
         "funds": "2"
     }
@@ -215,7 +213,6 @@ def makeOrder(request):
     headers["KC-API-SIGN"] = utils.createSignature(
         now, 'POST', endpoint, config, body=data_json)
 
-    # response = requests.request('GET', url+"/api/v1/market/allTickers" )
     response = requests.request(
         'POST', url+"/api/v1/orders", headers=headers, data=data_json)
     print(response.json())
@@ -226,9 +223,9 @@ def makeOrder(request):
     # Get order details in order to store in database
     orderDetails = getOrderDetails(orderID)
 
-    Transaction(userId=request.user.id,
+    Transaction(userId=request.user,
                 transactionId=orderDetails["data"]["id"],
-                symbol=orderDetails["data"]["symbol"],
+                symbol=orderDetails["data"]["symbol"].split("-")[0],
                 amountInvested=float(orderDetails["data"]["dealFunds"]),
                 transactionDate=int(orderDetails["data"]["createdAt"])).save()
 
@@ -249,6 +246,31 @@ def getAllCurrencies(request):
 
     return JsonResponse({"symbols": symbols})
 
+def getUserHoldings(request):
+
+    user = request.user.id
+    # userTransactions = Transaction.objects.filter(userId = request.user.id)
+    userTransactions = Transaction.objects.filter(userId = 1)
+    # userCurrencies = list(set([transaction.symbol for transaction in userTransactions]))
+    userHoldings = {}
+
+    for transaction in userTransactions:
+        if transaction.amountInvested > 0:
+            if not transaction.symbol in userHoldings:
+                userHoldings[transaction.symbol] = transaction.amountInvested
+            else:
+                userHoldings[transaction.symbol] = userHoldings[transaction.symbol] + transaction.amountInvested
+    
+    #Just returning the list of currencies bought for now. I may need to add other values later on  
+    
+    return JsonResponse({"currencies": userHoldings})
+
+def getUserPreferences(request):
+
+    userPreferences = CurrencySplitPref.objects.filter(userId = 1)
+    
+    return JsonResponse([userPreference.serialize() for userPreference in userPreferences], safe=False)
+
 
 def index(request):
     #Log in default user for testing
@@ -257,6 +279,10 @@ def index(request):
     # Check if authentication successful
     if user is not None:
         login(request, user)
+    
+    makeOrder(request)
+
+    getUserHoldings(request)
 
     return render(request, "build/index.html")
 

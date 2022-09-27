@@ -3,22 +3,49 @@ import { MenuList } from '@mui/material';
 import { MenuItem } from '@mui/material';
 import { ListItemText } from '@mui/material';
 import { ListItemIcon } from '@mui/material';
-import { Popover } from '@mui/material';
 
 
 import Header from "./Header";
 import TimeBar from "./TimeBar";
 import PortfolioSelectWindow from "./PortfolioSelectWindow";
+import { useEffect } from "react";
 
 
 function PortfolioPage() {
 
-  const [isOpen, setOpen] = useState()
-  const [w, h] = [window.innerWidth, window.innerHeight]
+  const [isOpen, setOpen] = useState(false)
+  const [userHoldings, setUserHoldings] = useState({})
+  const [holdingsUpdate, setHoldingsUpdate] = useState(true)
+  const [userPrefs, setUserPrefs] = useState([])
+  const [prefsUpdate, setPrefsUpdate] = useState(true)
 
   const handleClick = () => {
-    setOpen(true)
+    setOpen(!isOpen)
   }
+
+  useEffect(() => {
+    fetch("http://localhost:8000/getUserHoldings")
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result)
+      if (holdingsUpdate === true) {
+        setUserHoldings(result.currencies)
+      }
+      //Objects are compared by their reference so result and state will always be different because their references are different. Use stringify to convert them to a primitive type (string) to compare.
+      /* if (JSON.stringify(result) !== JSON.stringify(userHoldings)){
+        setUserHoldings(result)
+      } */
+    })
+    return setHoldingsUpdate(false)
+  }, [holdingsUpdate])
+
+  useEffect(() => {
+    fetch('http://localhost:8000/getUserPreferences')
+    .then((response) => response.json())
+    .then((prefs) => {
+      console.log(prefs)
+    })
+  }, [prefsUpdate])
 
   return (
     <>
@@ -44,29 +71,22 @@ function PortfolioPage() {
         <div className="col-start-2 col-span-2 h-full pl-5 pt-5 pb-5 border-white border-[1px] rounded-md">
           <div className="bg-green-500 w-full p-2 text-white font-bold mb-5">My Portfolio</div>
           <div className="w-4/5 mt-[10px]">
+            {userHoldings && Object.keys(userHoldings).map((curr) => {
+              return (
+              <div className='flex flex-row justify-between rounded-md p-3 bg-slate-800 text-white my-1' key={curr} >
+                {curr}
+                <span><input type="number" min="1"  /></span>
+              </div>)
+            })}
             <div className="bg-slate-900 p-3 text-white">
               <button onClick={handleClick} className="font-bold id='add-currency'">+ Add New Currency to Portfolio</button>
               {isOpen && 
-                <Popover
-                  open={true}
-                  anchorReference="anchorPosition"
-                  anchorPosition={{ top: h/2, left: w/2 }}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                  }}>
-                    <div className="w-80 bg-slate-600"> Content </div>
-                </Popover>
+                <PortfolioSelectWindow isOpen={handleClick}/>
               }
             </div>
           </div>
         </div>
       </div>
-      <PortfolioSelectWindow/>
     </>
   );
 }

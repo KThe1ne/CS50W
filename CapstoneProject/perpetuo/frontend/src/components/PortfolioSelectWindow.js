@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-function PortfolioSelectWindow() {
+function PortfolioSelectWindow(props) {
 
     const [currencyList, setCurrencyList] = useState()
 
@@ -8,14 +8,10 @@ function PortfolioSelectWindow() {
         fetch('http://localhost:8000/getAllCurrencies')
         .then((response) => response.json())
         .then((result) => {
-            const currencies = result.symbols.map((symbol) => symbol)
+            const currencies = result.symbols.map((symbol) => symbol.split("-")[0])
             setCurrencyList(currencies)
         })
     }, [])
-    
-    const handleXClick = () => {
-        
-    }
 
     return (
         <div style={{ 
@@ -25,7 +21,7 @@ function PortfolioSelectWindow() {
             top: "0px",
             left: "0px",
             backgroundColor: "rgb(15 23 42 / 0.75)"
-        }}>
+        }} id="portfolioSelectWindow">
             <div className= 'rounded-md p-3' style={{
                 position: "fixed",
                 top: "50%",
@@ -34,7 +30,7 @@ function PortfolioSelectWindow() {
                 transform: "translate(-50%, -50%)",
                 backgroundColor: "rgb(30 41 59)"
             }}>
-                <div className="exit text-white" style={{
+                <div className="exit text-white cursor-pointer" onClick={props.isOpen} style={{
                     position: "absolute",
                     right: "10px",
                     top: "18px",
@@ -51,8 +47,9 @@ function PortfolioSelectWindow() {
                     </div>
                     <div className='overflow-y-auto h-[263px] px-2' id='currency-list-container'>
                         { currencyList && currencyList.map((currency) => {
-                            return (<div className='rounded-md p-3 bg-slate-700 text-white my-1' key={currency} >
+                            return (<div className='flex flex-row justify-between rounded-md p-3 bg-slate-700 text-white my-1' key={currency} >
                                 {currency}
+                                <span className='invisible' id='tick'>✅</span>
                             </div>)
                         })}
                         <div className='rounded-md p-3 bg-slate-700 text-white my-1'>

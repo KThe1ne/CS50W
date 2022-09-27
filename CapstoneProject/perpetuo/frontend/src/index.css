@@ -24,4 +24,7 @@
     #currency-list-container:hover::-webkit-scrollbar-thumb{
       visibility: visible;
     }
+    input[type="number"]::-webkit-inner-spin-button {
+      cursor: pointer;
+    }
   }
