@@ -13,6 +13,9 @@ function PortfolioSelectWindow() {
         })
     }, [])
     
+    const handleXClick = () => {
+        
+    }
 
     return (
         <div style={{ 
@@ -28,7 +31,6 @@ function PortfolioSelectWindow() {
                 top: "50%",
                 left: "50%",
                 width: "50%",
-                height: "50%",
                 transform: "translate(-50%, -50%)",
                 backgroundColor: "rgb(30 41 59)"
             }}>
@@ -63,7 +65,7 @@ function PortfolioSelectWindow() {
                             hssbjhfbsjs
                         </div>
                     </div>
-                    <button className='relative left-1/2 top-[0.5rem] translate-x-[-50%] bg-green-500 text-slate-900 font-bold rounded-md p-3'>Submit</button>
+                    <button className='relative left-1/2 top-[0.5rem] translate-x-[-50%] bg-green-500 text-slate-900 font-bold rounded-md p-3 mb-3'>Submit</button>
                 </div>
             </div>
         </div>
