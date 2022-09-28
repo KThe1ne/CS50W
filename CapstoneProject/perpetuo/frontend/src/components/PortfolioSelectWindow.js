@@ -9,12 +9,18 @@ function PortfolioSelectWindow(props) {
         fetch('http://localhost:8000/getAllCurrencies')
         .then((response) => response.json())
         .then((result) => {
-            const currencies = result.symbols.map((symbol) => symbol.split("-")[0])
+            let currencies = result.symbols.map((symbol) => symbol.split("-")[0])
+            const userPrefCurrencies = props.userPrefs.map((prefs) => {
+                return prefs.currency
+            })
+            currencies = currencies.filter(currency => !userPrefCurrencies.includes(currency))
             setCurrencyList(currencies)
+            console.log(currencyList)
         })
     }, [])
 
     const handleCurrencyClick = ({target}) => {
+        console.log("Clicked", target.querySelector("#tick").style.visibility)
         if (target.querySelector("#tick").style.visibility === "hidden"){
             target.querySelector("#tick").style.visibility = "visible"
             target.className += " selected"
@@ -27,17 +33,17 @@ function PortfolioSelectWindow(props) {
 
     const handleSubmitButtonClick = () => {
         const selectedTargets = document.querySelectorAll(".selected");
-        const selectedCurrencies = {}
+        const selectedCurrencies = []
         selectedTargets.forEach((element) => {
-            selectedCurrencies[element.querySelector("p").innerHTML] = 0
+            selectedCurrencies.push({"currency": [element.querySelector("p").innerHTML][0], "percentage": 0})
         })
-        props.setUserHoldings((prevState) => {
-            return {
+        props.setUserPrefs((prevState) => {
+            return [
                 ...prevState,
                 ...selectedCurrencies
-            }
+            ]
         })
-        props.setHoldingsUpdate(true)
+        props.isOpen()
     }
 
     return (
@@ -74,15 +80,10 @@ function PortfolioSelectWindow(props) {
                     </div>
                     <div className='overflow-y-auto h-[263px] px-2' id='currency-list-container'>
                         { currencyList && currencyList.map((currency) => {
-                            if (!Object.keys(props.userHoldings).includes(currency)){
-                                return (<div className='flex flex-row justify-between rounded-md p-3 bg-slate-700 text-white my-1 cursor-pointer' onClick={handleCurrencyClick} key={currency} >
-                                    <p>{currency}</p>
-                                    <span className='invisible' id='tick'>✅</span>
-                                </div>)
-                            }
-                            else{
-                                return undefined
-                            }
+                            return (<button className='flex flex-row justify-between rounded-md p-3 bg-slate-700 text-white my-1 w-full' onClick={handleCurrencyClick} key={currency} >
+                                <p>{currency}</p>
+                                <span className='invisible' id='tick'>✅</span>
+                            </button>)
                         })}
                     </div>
                     <button className='relative left-1/2 top-[0.5rem] translate-x-[-50%] bg-green-500 text-slate-900 font-bold rounded-md p-3 mb-3 'onClick={handleSubmitButtonClick}>Submit</button>

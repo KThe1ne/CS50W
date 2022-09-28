@@ -14,7 +14,7 @@ function PortfolioPage() {
 	const [userHoldings, setUserHoldings] = useState({});
 	const [holdingsUpdate, setHoldingsUpdate] = useState(true);
 	const [userPrefs, setUserPrefs] = useState([]);
-	const [prefsUpdate, setPrefsUpdate] = useState(true);
+	const [prefsUpdate, setPrefsUpdate] = useState(false);
 
 	const handleClick = () => {
 		setOpen(!isOpen);
@@ -40,21 +40,28 @@ function PortfolioPage() {
 		fetch("http://localhost:8000/getUserPreferences")
 			.then((response) => response.json())
 			.then((prefs) => {
-				console.log(prefs);
+				console.log("Prefs: ",prefs);
 				setUserPrefs(prefs);
 			});
 	}, []);
 	
+	const handleSaveClick = () => {
+		setPrefsUpdate(true)
+	}
+
 	useEffect(() => {
-		fetch("http://localhost:8000/getUserPreferences")
-			.then((response) => response.json())
-			.then((prefs) => {
-				console.log(prefs);
-				if (prefsUpdate === true) {
-					setUserPrefs(prefs);
-				}
-			});
-	}, [prefsUpdate]);
+		console.log("Test")
+		if (prefsUpdate === true){
+		fetch("http://localhost:8000/getUserPreferences", {
+			method: "POST",
+			body: JSON.stringify({userPrefs: userPrefs}),
+		})
+		.then((response) => response.json())
+		.then((result) => console.log(result))
+	 	}
+		return setPrefsUpdate(false)
+	}, [prefsUpdate]); // For saving prefs update before sending to server
+
 
 	return (
 		<>
@@ -93,7 +100,7 @@ function PortfolioPage() {
 					<div className="bg-green-500 w-full p-2 text-white font-bold mb-5">
 						My Portfolio
 					</div>
-					<div className="w-4/5 mt-[10px]">
+					<div className="w-4/5 mt-[10px] flex flex-col">
 						{userPrefs &&
 							userPrefs.map((pref) => {
 								return (
@@ -116,18 +123,18 @@ function PortfolioPage() {
 									</div>
 								);
 							})}
-						<div className="bg-slate-900 p-3 text-white">
 							<button
 								onClick={handleClick}
-								className="font-bold id='add-currency'"
+								className="font-bold block p-3 bg-slate-900 text-white w-full mb-5"
+								id='add-currency'
 							>
 								+ Add New Currency to Portfolio
 							</button>
-							{isOpen && (
-								<PortfolioSelectWindow isOpen={handleClick} userHoldings={userHoldings} setUserHoldings={setUserHoldings} setHoldingsUpdate={setHoldingsUpdate}/>
-							)}
-							{ console.log("userHoldings", userHoldings)}
-						</div>
+							{ console.log("userHoldings", userPrefs)}
+						<button className="relative bg-green-500 text-white font-bold p-3 block rounded-md right-0 left-auto w-min self-end" onClick={handleSaveClick}>Save</button>
+						{isOpen && (
+							<PortfolioSelectWindow isOpen={handleClick} userPrefs={userPrefs} setUserPrefs={setUserPrefs} setPrefsUpdate={setPrefsUpdate}/>
+						)}
 					</div>
 				</div>
 			</div>

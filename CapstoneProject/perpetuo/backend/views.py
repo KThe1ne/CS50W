@@ -19,7 +19,7 @@ import datetime
 
 import pandas as pd
 
-from .models import Transaction, CurrencySplitPref  # Used for testing
+from .models import User, Transaction, CurrencySplitPref  # Used for testing
 
 from . import utils
 
@@ -265,9 +265,23 @@ def getUserHoldings(request):
     
     return JsonResponse({"currencies": userHoldings})
 
+@csrf_exempt
 def getUserPreferences(request):
-
     userPreferences = CurrencySplitPref.objects.filter(userId = 1)
+    
+    if request.method == "POST":
+        test = request.body
+        test1 = json.loads(request.body.decode('utf-8'))
+        userPrefs = json.loads(request.body)
+        userPreferences.delete()
+        for userPref in userPrefs:
+            check = userPref
+            CurrencySplitPref(
+                userId = User.objects.get(id = 1),
+                currency = userPref["currency"],
+                percentage = userPref["percentage"],
+            ).save()
+            
     
     return JsonResponse([userPreference.serialize() for userPreference in userPreferences], safe=False)
 
