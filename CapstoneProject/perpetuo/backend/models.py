@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
@@ -9,7 +10,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    pass
+    portfolioSplitPreference = models.JSONField(default={})
+    dcaFrequency = models.JSONField(default={}) #Used Jsonfield just in case more complex entries are required in the future
 
 
 class Transaction(models.Model):
