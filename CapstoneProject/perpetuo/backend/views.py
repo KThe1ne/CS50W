@@ -19,7 +19,7 @@ import datetime
 
 import pandas as pd
 
-from .models import User, Transaction, CurrencySplitPref  # Used for testing
+from .models import User, Transaction  # Used for testing
 
 from . import utils
 
@@ -89,17 +89,16 @@ def priceHistory(request, trading_pair, period, extent="1M"):
 
 
 def getUserTrades():
+    """  # endpoint = "/api/v1/orders?tradeType=TRADE&startAt=0000000000000&pageSize=500"
+     # endpoint = "/api/v1/fills?startAt=0000000000000"
+     endpoint = "/api/v1/fills"
 
-   """  # endpoint = "/api/v1/orders?tradeType=TRADE&startAt=0000000000000&pageSize=500"
-    # endpoint = "/api/v1/fills?startAt=0000000000000"
-    endpoint = "/api/v1/fills"
+     headers["KC-API-SIGN"] = utils.createSignature(
+         now, 'GET', endpoint, config)
 
-    headers["KC-API-SIGN"] = utils.createSignature(
-        now, 'GET', endpoint, config)
+     response = requests.request('GET', url+endpoint, headers=headers)
 
-    response = requests.request('GET', url+endpoint, headers=headers)
-
-    print(response.json()) """
+     print(response.json()) """
 
 
 # getUserTrades()
@@ -196,6 +195,7 @@ def getOrderDetails(orderID):
 
     return response.json()
 
+
 @login_required
 def makeOrder(request):
 
@@ -204,7 +204,7 @@ def makeOrder(request):
     data = {
         "clientOid": "PPTOrder",
         "side": "buy",
-        "symbol": "KCS-USDT",
+        "symbol": "ETH-USDT",
         "type": "market",
         "funds": "2"
     }
@@ -246,11 +246,12 @@ def getAllCurrencies(request):
 
     return JsonResponse({"symbols": symbols})
 
+
 def getUserHoldings(request):
 
     user = request.user.id
     # userTransactions = Transaction.objects.filter(userId = request.user.id)
-    userTransactions = Transaction.objects.filter(userId = 1)
+    userTransactions = Transaction.objects.filter(userId=1)
     # userCurrencies = list(set([transaction.symbol for transaction in userTransactions]))
     userHoldings = {}
 
@@ -259,44 +260,38 @@ def getUserHoldings(request):
             if not transaction.symbol in userHoldings:
                 userHoldings[transaction.symbol] = transaction.amountInvested
             else:
-                userHoldings[transaction.symbol] = userHoldings[transaction.symbol] + transaction.amountInvested
-    
-    #Just returning the list of currencies bought for now. I may need to add other values later on  
-    
+                userHoldings[transaction.symbol] = userHoldings[transaction.symbol] + \
+                    transaction.amountInvested
+
+    # Just returning the list of currencies bought for now. I may need to add other values later on
+
     return JsonResponse({"currencies": userHoldings})
+
 
 @csrf_exempt
 def getUserPreferences(request):
-    userPreferences = CurrencySplitPref.objects.filter(userId = 1)
-    
+    user = User.objects.get(id=1)
+    userPreferences = user.portfolioSplitPreference
+
     if request.method == "POST":
-        test = request.body
-        test1 = json.loads(request.body.decode('utf-8'))
         userPrefs = json.loads(request.body)
-        userPreferences.delete()
-        for userPref in userPrefs:
-            check = userPref
-            CurrencySplitPref(
-                userId = User.objects.get(id = 1),
-                currency = userPref["currency"],
-                percentage = userPref["percentage"],
-            ).save()
-            
-    
-    return JsonResponse([userPreference.serialize() for userPreference in userPreferences], safe=False)
+        user.portfolioSplitPreference = userPrefs
+        user.save()
+        return JsonResponse({"response": "Success"})
+
+    return JsonResponse(userPreferences, safe=False)
 
 
 def index(request):
-    #Log in default user for testing
+    # Log in default user for testing
     user = authenticate(request, username="kamoi", password="Random")
 
     # Check if authentication successful
     if user is not None:
         login(request, user)
-    
-    makeOrder(request)
 
-    getUserHoldings(request)
+    # makeOrder(request)
+
+    # getUserHoldings(request)
 
     return render(request, "build/index.html")
-

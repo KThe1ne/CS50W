@@ -10,12 +10,9 @@ function PortfolioSelectWindow(props) {
         .then((response) => response.json())
         .then((result) => {
             let currencies = result.symbols.map((symbol) => symbol.split("-")[0])
-            const userPrefCurrencies = props.userPrefs.map((prefs) => {
-                return prefs.currency
-            })
+            const userPrefCurrencies = Object.keys(props.userPrefs)
             currencies = currencies.filter(currency => !userPrefCurrencies.includes(currency))
             setCurrencyList(currencies)
-            console.log(currencyList)
         })
     }, [])
 
@@ -33,16 +30,17 @@ function PortfolioSelectWindow(props) {
 
     const handleSubmitButtonClick = () => {
         const selectedTargets = document.querySelectorAll(".selected");
-        const selectedCurrencies = []
+        const selectedCurrencies = {}
         selectedTargets.forEach((element) => {
-            selectedCurrencies.push({"currency": [element.querySelector("p").innerHTML][0], "percentage": 0})
+            selectedCurrencies[element.querySelector("p").innerHTML] = 0
         })
         props.setUserPrefs((prevState) => {
-            return [
+            return {
                 ...prevState,
                 ...selectedCurrencies
-            ]
+            }
         })
+        console.log("UserPrefs", props.userPrefs)
         props.isOpen()
     }
 

@@ -10,8 +10,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    portfolioSplitPreference = models.JSONField(default={})
-    dcaFrequency = models.JSONField(default={}) #Used Jsonfield just in case more complex entries are required in the future
+    portfolioSplitPreference = models.JSONField(default=dict)
+    dcaFrequency = models.JSONField(default=dict) #Used Jsonfield just in case more complex entries are required in the future
 
 
 class Transaction(models.Model):
@@ -21,16 +21,7 @@ class Transaction(models.Model):
     symbol = models.CharField(max_length=10, blank=False)
     transactionDate = models.IntegerField(blank=False)
 
-class CurrencySplitPref(models.Model):
-    userId = models.ManyToManyField("User", blank=False, related_name="userPortfolioPref")
-    currency = models.CharField(max_length=10, blank=False)
-    percentage = models.PositiveIntegerField(blank=False, validators=[MinValueValidator(1), MaxValueValidator(100)]) 
 
-    def serialize(self):
-        return {
-            "currency": self.currency,
-            "percentage": self.percentage,
-        }
 
 
 

@@ -13,7 +13,7 @@ function PortfolioPage() {
 	const [isOpen, setOpen] = useState(false);
 	const [userHoldings, setUserHoldings] = useState({});
 	const [holdingsUpdate, setHoldingsUpdate] = useState(true);
-	const [userPrefs, setUserPrefs] = useState([]);
+	const [userPrefs, setUserPrefs] = useState({});
 	const [prefsUpdate, setPrefsUpdate] = useState(false);
 
 	const handleClick = () => {
@@ -50,18 +50,35 @@ function PortfolioPage() {
 	}
 
 	useEffect(() => {
-		console.log("Test")
 		if (prefsUpdate === true){
-		fetch("http://localhost:8000/getUserPreferences", {
-			method: "POST",
-			body: JSON.stringify({userPrefs: userPrefs}),
-		})
-		.then((response) => response.json())
-		.then((result) => console.log(result))
+			fetch("http://localhost:8000/getUserPreferences", {
+				method: "POST",
+				body: JSON.stringify(userPrefs),
+			})
+			.then((response) => response.json())
+			.then((result) => console.log(result))
 	 	}
 		return setPrefsUpdate(false)
 	}, [prefsUpdate]); // For saving prefs update before sending to server
 
+	const handlePercentageInput = ({ target }) => {
+		let sum = 0;
+		target.parentNode.parentNode.querySelector("span").style.visibility = "visible"
+		Object.keys(userPrefs).forEach(currency => {
+			console.log(currency)
+			console.log(sum)
+			if (currency !== target.dataset.currency){
+				sum += userPrefs[currency]
+			}
+		})
+		console.log(sum + parseInt(target.value))
+		if (sum + parseInt(target.value) > 100) {
+			target.parentNode.style.border = "1px solid red"
+		}
+		else {
+			target.parentNode.style.border = "1px solid green"
+		}
+	}
 
 	return (
 		<>
@@ -102,23 +119,27 @@ function PortfolioPage() {
 					</div>
 					<div className="w-4/5 mt-[10px] flex flex-col">
 						{userPrefs &&
-							userPrefs.map((pref) => {
+							Object.keys(userPrefs).map((currency) => {
 								return (
 									<div
 										className="flex flex-row justify-between rounded-md p-3 bg-slate-800 text-white my-1"
-										key={pref["currency"]}
+										key={currency}
 									>
-										{pref["currency"]}
+										{currency}
 										<span>
-											<span className="text-white opacity-50 invisible">{pref["percentage"]}%</span>
-											<input
-												type="number"
-												min="1"
-												max="99"
-												placeholder={pref["percentage"]}
-												className="bg-transparent text-center"
-											/>
-											%
+											<span className="text-white opacity-50 invisible mr-1">{userPrefs[currency]}%</span>
+											<span className="p-2 rounded-md">
+												<input
+													type="number"
+													min="1"
+													max="99"
+													placeholder={userPrefs[currency]}
+													className="bg-transparent text-center outline-none"
+													data-currency={currency}
+													onChange={handlePercentageInput}
+												/>
+												%
+											</span>
 										</span>
 									</div>
 								);
@@ -130,7 +151,7 @@ function PortfolioPage() {
 							>
 								+ Add New Currency to Portfolio
 							</button>
-							{ console.log("userHoldings", userPrefs)}
+							{ console.log("userPrefs", userPrefs) }
 						<button className="relative bg-green-500 text-white font-bold p-3 block rounded-md right-0 left-auto w-min self-end" onClick={handleSaveClick}>Save</button>
 						{isOpen && (
 							<PortfolioSelectWindow isOpen={handleClick} userPrefs={userPrefs} setUserPrefs={setUserPrefs} setPrefsUpdate={setPrefsUpdate}/>
