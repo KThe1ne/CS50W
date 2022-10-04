@@ -46,7 +46,22 @@ function PortfolioPage() {
 	}, []);
 	
 	const handleSaveClick = () => {
+		const portfolioPrefs = {}
+		document.querySelectorAll("#allocation").forEach((inputField) => {
+			if (inputField.value !== ''){
+				portfolioPrefs[inputField.dataset.currency] = parseInt(inputField.value)
+			}
+			// Add pop up to check if user would like to remove currency with 0% allocation from their portfolio.
+		})
+		console.log(portfolioPrefs)
+		setUserPrefs(prev => {
+			return {
+				...prev,
+				...portfolioPrefs
+			}
+		})
 		setPrefsUpdate(true)
+
 	}
 
 	useEffect(() => {
@@ -74,6 +89,7 @@ function PortfolioPage() {
 		console.log(sum + parseInt(target.value))
 		if (sum + parseInt(target.value) > 100) {
 			target.parentNode.style.border = "1px solid red"
+			document.getElementById("save-prefs-btn").disabled = true
 		}
 		else {
 			target.parentNode.style.border = "1px solid green"
@@ -130,6 +146,7 @@ function PortfolioPage() {
 											<span className="text-white opacity-50 invisible mr-1">{userPrefs[currency]}%</span>
 											<span className="p-2 rounded-md">
 												<input
+													id="allocation"
 													type="number"
 													min="1"
 													max="99"
@@ -152,7 +169,7 @@ function PortfolioPage() {
 								+ Add New Currency to Portfolio
 							</button>
 							{ console.log("userPrefs", userPrefs) }
-						<button className="relative bg-green-500 text-white font-bold p-3 block rounded-md right-0 left-auto w-min self-end" onClick={handleSaveClick}>Save</button>
+						<button id="save-prefs-btn" className="relative bg-green-500 text-white font-bold p-3 block rounded-md right-0 left-auto w-min self-end" onClick={handleSaveClick}>Save</button>
 						{isOpen && (
 							<PortfolioSelectWindow isOpen={handleClick} userPrefs={userPrefs} setUserPrefs={setUserPrefs} setPrefsUpdate={setPrefsUpdate}/>
 						)}
