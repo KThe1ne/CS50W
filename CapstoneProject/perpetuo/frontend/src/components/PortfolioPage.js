@@ -16,6 +16,8 @@ function PortfolioPage() {
 	const [userPrefs, setUserPrefs] = useState({});
 	const [prefsUpdate, setPrefsUpdate] = useState(false);
 
+	// Might need to use temp state to hold prefs while changes are being made and before submission
+
 	const handleClick = () => {
 		setOpen(!isOpen);
 	};

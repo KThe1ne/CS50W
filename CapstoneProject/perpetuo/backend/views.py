@@ -89,83 +89,191 @@ def priceHistory(request, trading_pair, period, extent="1M"):
 
 
 def getUserTrades():
-    """  # endpoint = "/api/v1/orders?tradeType=TRADE&startAt=0000000000000&pageSize=500"
-     # endpoint = "/api/v1/fills?startAt=0000000000000"
-     endpoint = "/api/v1/fills"
 
-     headers["KC-API-SIGN"] = utils.createSignature(
-         now, 'GET', endpoint, config)
+    currPage=1
+    fills = []
 
-     response = requests.request('GET', url+endpoint, headers=headers)
+    while (True):
+        endpoint = f"/api/v1/fills?currentPage={currPage}"
 
-     print(response.json()) """
+        headers["KC-API-SIGN"] = utils.createSignature(
+            now, 'GET', endpoint, config)
+
+        response = requests.request('GET', url+endpoint, headers=headers)
+        response = response.json()["data"]
+        fills.extend(response["items"])
+
+        if currPage >= response["totalPage"]:
+            break
+
+        if response["items"] == []:
+            break
+
+        currPage +=1   
+
+    return fills
 
 
 # getUserTrades()
 
-
-def getGrowthPercentage(purchaseDetails, currPrice):
-
-    # totalInvestment = sum([purchaseDetail[0]
-    #                       for purchaseDetail in purchaseDetails])
-    # print(totalInvestment)
-    # growth = sum([(purchaseDetail[0]/totalInvestment)*((currPrice-purchaseDetail[1]
-    #                                                     )/purchaseDetail[1]) for purchaseDetail in purchaseDetails])*100
-    # print(growth)
-    purchaseDetails = pd.read_excel("./test1.xlsx")
-    purchaseDetails["units"] = purchaseDetails[0]/purchaseDetails[1]
-    withdraws = purchaseDetails.loc[purchaseDetails[0] < 0]
-    purchases = purchaseDetails.loc[purchaseDetails[0] > 0]
-    sum_of_purchased_units = purchases["units"].sum()
-    sum_of_sold_units = withdraws["units"].sum()
-    if sum_of_purchased_units > 0:
-        avg_buy_price = ((purchases["units"]*purchases[1]).sum()/sum_of_purchased_units)
-        curr_val_purchases = (purchases[0].sum()/avg_buy_price)
-    if sum_of_sold_units < 0:
-        avg_sell_price = ((withdraws["units"]*withdraws[1]).sum()/sum_of_sold_units)
-        curr_val_withdraws = (withdraws[0].sum()/avg_sell_price) * -1
-    else:
-        curr_val_withdraws = 0
-    curr_val = currPrice*(curr_val_purchases-curr_val_withdraws)
-    growth = (curr_val-(purchases[0].sum()+withdraws[0].sum()))/(purchases[0].sum())*100
-    print("Growth %: ", growth)
-
-def pastHistoricalGrowth(symbol="BTC-USDT", period="4hour", extent="1Y", investmentCycle=""):
+def pastHistoricalGrowth(request, symbol="BTC", period="4hour", extent="1Y", dataType="simulated", frequency="weekly"):
     # Get the estimated growth if the same amount was invested at regular intervals over the specified extent
+    """
+        Periods:  1hour, 2hour, 4hour, 6hour, 8hour, 12hour, 1day, 1week
+    """
 
-    currPrice = 20079
-
+    symbol = symbol + "-USDT"
     data = []
-    klines = getPriceHistory(symbol, period, extent)["data"] 
-    data = [{
-        "startTime": kline[0],
-        "avgPrice": (float(kline[1])+float(kline[2]))/2
-    }
-        for kline in klines]
+
+    if dataType == "simulated":
+
+        # Get candle (klines) data with Kucoin API
+        klines = getPriceHistory(symbol, period, extent)["data"] 
+        
+        currPrice = (float(klines[0][1])+float(klines[0][2]))/2 
+        prevDate = datetime.datetime.fromtimestamp(int(klines[0][0]))
+        lastDate = datetime.datetime.fromtimestamp(int(klines[-1][0]))
+       
+        
+        for kline in klines:
+
+            if kline[0] == str(int(datetime.datetime.timestamp(prevDate))):
+                 # Store the start time and average price of each candle
+                data.append({
+                    "startTime": datetime.datetime.fromtimestamp(int(kline[0])),
+                    "amountInvested": 100,
+                    "avgPrice": (float(kline[1])+float(kline[2]))/2
+                })
+                if frequency == "daily":
+                    prevDate = prevDate - datetime.timedelta(days=1)
+                elif frequency == "weekly":
+                    prevDate = prevDate - datetime.timedelta(days=7)
+                elif frequency == "monthly":
+                    prevDate = prevDate - datetime.timedelta(weeks=4)
+
+                    
+
+            if str(prevDate) < klines[-1][0]:
+                break
+    
+    """ if dataType == "real":
+
+        tradeDetails = getUserTrades()
+
+        #In order to find growth percentage from userTrades, pass the symbol of interest and ensure that the trade was made from this program
+        #Create a list of traded currencies and use a for loop to run the getGrowthPercentage function on each pair then find the average growth for the overall portfolio growth """
+
     df = pd.DataFrame(data=data)
-    df.to_excel("./test.xlsx")
 
-    prevDate = datetime.datetime.fromtimestamp(int(df["startTime"][0]))
-
-    purchasePrices = []
-    lastDate = prevDate - datetime.timedelta(weeks=52)
-
-    while (prevDate >= lastDate):
-        purchasePrice = df["avgPrice"].loc[df["startTime"]
-                                           == str(int(datetime.datetime.timestamp(prevDate)))]
-        prevDate = prevDate - datetime.timedelta(days=7)
-        try:
-            purchasePrices.append([100, float(purchasePrice.values[0])])
-        except:
-            pass
-
-    dftest = pd.DataFrame(data=purchasePrices)
-    # dftest.to_excel("./test1.xlsx")
-    getGrowthPercentage(dftest, currPrice)
+    return JsonResponse({
+            "no_of_cycles": int(len(df)),
+            "startDate": datetime.datetime.fromtimestamp(int(klines[-1][0])).strftime("%m/%d/%Y"),
+            "endDate": datetime.datetime.fromtimestamp(int(klines[0][0])).strftime("%m/%d/%Y"),
+            **utils.getGrowthPercentage(df, currPrice) #Unpacking dictionary passed from function
+        })
 
 
-pastHistoricalGrowth(investmentCycle="weekly")
-             
+
+# getPriceHistoryTest()
+def getOrderDetails(orderID):
+    # Obtain order details given order ID
+
+    endpoint = "/api/v1/orders/" + orderID
+
+    headers["KC-API-SIGN"] = utils.createSignature(
+        now, 'GET', endpoint, config)
+
+    response = requests.request('GET', url+endpoint, headers=headers)
+
+    print(response.json())
+
+    return response.json()
+
+
+@login_required
+def makeOrder(request):
+
+    endpoint = '/api/v1/orders'
+
+    data = {
+        "clientOid": "PPTOrder",
+        "side": "buy",
+        "symbol": "ETH-USDT",
+        "type": "market",
+        "funds": "2"
+    }
+    data_json = json.dumps(data)
+
+    headers["KC-API-SIGN"] = utils.createSignature(
+        now, 'POST', endpoint, config, body=data_json)
+
+    response = requests.request(
+        'POST', url+"/api/v1/orders", headers=headers, data=data_json)
+    print(response.json())
+    response = response.json()
+
+    orderID = response["data"]["orderId"]
+
+    # Get order details in order to store in database
+    orderDetails = getOrderDetails(orderID)
+
+    Transaction(userId=request.user,
+                transactionId=orderDetails["data"]["id"],
+                symbol=orderDetails["data"]["symbol"].split("-")[0],
+                amountInvested=float(orderDetails["data"]["dealFunds"]),
+                transactionDate=int(orderDetails["data"]["createdAt"])).save()
+
+    return response
+
+# makeOrder()
+# getUserTrades()
+
+
+def getAllCurrencies(request):
+
+    endpoint = "/api/v1/market/allTickers"
+    response = requests.request('GET', url+endpoint)
+    response = response.json()
+    # Get currency icon from coinmarketcap API - https://coinmarketcap.com/api/documentation/v1/#operation/getV1CryptocurrencyInfo
+    symbols = [pair["symbol"]
+               for pair in response["data"]["ticker"] if "USD" in pair["symbol"]]
+
+    return JsonResponse({"symbols": symbols})
+
+
+def getUserHoldings(request):
+
+    user = request.user.id
+    # userTransactions = Transaction.objects.filter(userId = request.user.id)
+    userTransactions = Transaction.objects.filter(userId=1)
+    # userCurrencies = list(set([transaction.symbol for transaction in userTransactions]))
+    userHoldings = {}
+
+    for transaction in userTransactions:
+        if transaction.amountInvested > 0:
+            if not transaction.symbol in userHoldings:
+                userHoldings[transaction.symbol] = transaction.amountInvested
+            else:
+                userHoldings[transaction.symbol] = userHoldings[transaction.symbol] + \
+                    transaction.amountInvested
+
+    # Just returning the list of currencies bought for now. I may need to add other values later on
+
+    return JsonResponse({"currencies": userHoldings})
+
+
+@csrf_exempt
+def getUserPreferences(request):
+    user = User.objects.get(id=1)
+    userPreferences = user.portfolioSplitPreference
+
+    if request.method == "POST":
+        userPrefs = json.loads(request.body)
+        user.portfolioSplitPreference = userPrefs
+        user.save()
+        return JsonResponse({"response": "Success"})
+
+    return JsonResponse(userPreferences, safe=False)
 
 
 def index(request):

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import GrowthInfo from './GrowthInfo'
 
 function PortfolioSelectWindow(props) {
 
@@ -17,7 +18,7 @@ function PortfolioSelectWindow(props) {
     }, [])
 
     const handleCurrencyClick = ({target}) => {
-        console.log("Clicked", target.querySelector("#tick").style.visibility)
+        // console.log("Clicked", target.querySelector("#tick").style.visibility)
         if (target.querySelector("#tick").style.visibility === "hidden"){
             target.querySelector("#tick").style.visibility = "visible"
             target.className += " selected"
@@ -59,7 +60,7 @@ function PortfolioSelectWindow(props) {
                 left: "50%",
                 width: "50%",
                 transform: "translate(-50%, -50%)",
-                backgroundColor: "rgb(30 41 59)"
+                backgroundColor: "rgb(30 41 59)",
             }}>
                 <div className="exit text-white cursor-pointer" onClick={props.isOpen} style={{
                     position: "absolute",
@@ -71,16 +72,18 @@ function PortfolioSelectWindow(props) {
                     height: "1rem"
                 }}>x</div>
                 <div style={{
-                    paddingTop: "1rem"
+                    paddingTop: "1rem",
+                    overflowX: "visible"
                 }}>
                     <div className='rounded-md bg-slate-900 p-3 text-white text-center my-3'>
                         <p>Add New Cryptos to Your Portfolio</p>
                     </div>
-                    <div className='overflow-y-auto h-[263px] px-2' id='currency-list-container'>
+                    <div className='overflow-y-auto h-[263px] px-2 overflow-x-clip' id='currency-list-container'>
                         { currencyList && currencyList.map((currency) => {
-                            return (<button className='flex flex-row justify-between rounded-md p-3 bg-slate-700 text-white my-1 w-full' onClick={handleCurrencyClick} key={currency} >
+                            return (<button className='flex flex-row justify-between rounded-md p-3 bg-slate-700 text-white my-1 w-full relative' onClick={handleCurrencyClick} key={currency} >
                                 <p>{currency}</p>
-                                <span className='invisible' id='tick'>✅</span>
+                                <span className='invisible ml-auto' id='tick'>✅</span>
+                                <GrowthInfo currency={currency}/>
                             </button>)
                         })}
                     </div>

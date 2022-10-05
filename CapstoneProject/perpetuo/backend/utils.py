@@ -33,3 +33,26 @@ def createPassphrase(config):
 
     return passphrase
 
+def getGrowthPercentage(tradeDetails, currPrice):
+
+    tradeDetails["units"] = tradeDetails["amountInvested"]/tradeDetails["avgPrice"]
+    withdraws = tradeDetails.loc[tradeDetails["amountInvested"] < 0]
+    purchases = tradeDetails.loc[tradeDetails["amountInvested"] > 0]
+    total_invested = purchases["amountInvested"].sum()
+    sum_of_purchased_units = purchases["units"].sum()
+    sum_of_sold_units = withdraws["units"].sum()
+    if sum_of_purchased_units > 0:
+        avg_buy_price = ((purchases["units"]*purchases["avgPrice"]).sum()/sum_of_purchased_units)
+        curr_val_purchases = (total_invested/avg_buy_price)
+    if sum_of_sold_units < 0:
+        avg_sell_price = ((withdraws["units"]*withdraws["avgPrice"]).sum()/sum_of_sold_units)
+        curr_val_withdraws = (withdraws["amountInvested"].sum()/avg_sell_price) * -1
+    else:
+        curr_val_withdraws = 0
+    curr_val = currPrice*(curr_val_purchases-curr_val_withdraws)
+    growth = (curr_val-(total_invested+withdraws["amountInvested"].sum()))/(total_invested)*100
+    return {
+        #Parse to float from numpy data type since numpy data types are not Json serializable
+        "growth": float(growth), 
+        "total_invested": float(total_invested) 
+        }
